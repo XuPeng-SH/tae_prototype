@@ -7,6 +7,7 @@ import (
 	"fmt"
 	// log "github.com/sirupsen/logrus"
 	"tae/pkg/common/types"
+	"tae/pkg/common/types/constants"
 )
 
 func WhichEntry(idx types.IDX_T) types.IDX_T {
@@ -65,6 +66,10 @@ func (vm *ValidityMask) Init(count int) {
 	if count < 0 {
 		panic("Count should not be negtive value")
 	}
+	if count > constants.STANDARD_VECTOR_SIZE {
+		panic(fmt.Sprintf("Too big count, should not be larger than %d", constants.STANDARD_VECTOR_SIZE))
+	}
+
 	if count == 0 {
 		return
 	}
@@ -101,6 +106,38 @@ func (vm *ValidityMask) SetInvalid(row_idx int) {
 		return
 	}
 	vm.Data[bi.Idx] &= ^(byte(1) << bi.Offset)
+}
+
+func (vm *ValidityMask) ValidateRows(rows int) {
+	if rows >= constants.STANDARD_VECTOR_SIZE || rows < 0 {
+		panic(fmt.Sprintf("Rows should be not more than %d", constants.STANDARD_VECTOR_SIZE))
+	}
+	if rows == 0 || vm.Len() == 0 {
+		return
+	}
+
+	ei := GetEntryIndex(rows)
+	idx := (ei.Idx + 1) * BYTES_PER_ENTRY
+	for i := 0; i < idx; i++ {
+		vm.Data[i] = byte(0xff)
+	}
+}
+
+func (vm *ValidityMask) InvalidateRows(rows int) {
+	if rows >= constants.STANDARD_VECTOR_SIZE || rows < 0 {
+		panic(fmt.Sprintf("Rows should be not more than %d", constants.STANDARD_VECTOR_SIZE))
+	}
+	if rows == 0 {
+		return
+	}
+	if vm.Len() == 0 {
+		vm.Init(rows)
+	}
+	ei := GetEntryIndex(rows)
+	idx := (ei.Idx + 1) * BYTES_PER_ENTRY
+	for i := 0; i < idx; i++ {
+		vm.Data[i] = 0
+	}
 }
 
 func (vm *ValidityMask) SetValid(row_idx int) {

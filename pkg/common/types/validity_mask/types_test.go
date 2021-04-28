@@ -60,7 +60,22 @@ func TestValidityMask1(t *testing.T) {
 
 func TestValidityMask2(t *testing.T) {
 	vm1 := New(0)
-	if vm1.Len() != 0 {
-		t.Errorf("Wrong ValidityMask Len %d, %d is expected", vm1.Len(), 0)
-	}
+	assert.Equal(t, vm1.Len(), 0)
+
+	vm2 := New(200)
+	assert.Equal(t, vm2.Len(), 32)
+	assert.True(t, vm2.IsRowValid(99))
+	assert.True(t, vm2.IsRowValid(100))
+	assert.True(t, vm2.IsRowValid(127))
+	assert.True(t, vm2.IsRowValid(128))
+	vm2.InvalidateRows(100)
+	assert.False(t, vm2.IsRowValid(99))
+	assert.False(t, vm2.IsRowValid(100))
+	assert.False(t, vm2.IsRowValid(127))
+	assert.True(t, vm2.IsRowValid(128))
+	vm2.ValidateRows(100)
+	assert.True(t, vm2.IsRowValid(99))
+	assert.True(t, vm2.IsRowValid(100))
+	assert.True(t, vm2.IsRowValid(127))
+	assert.True(t, vm2.IsRowValid(128))
 }
