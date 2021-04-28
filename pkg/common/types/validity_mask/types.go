@@ -1,17 +1,27 @@
 package validity_mask
 
 import (
-	"bytes"
 	"unsafe"
 )
 
 type EntryT uint64
 
 const (
-	BITS_PER_ENTRY = (uint)(unsafe.Sizeof(EntryT(0))) * 8
-	MAX_ENTRY      = ^EntryT(0)
+	BYTES_PER_ENTRY = (int)(unsafe.Sizeof(EntryT(0)))
+	BITS_PER_ENTRY  = BYTES_PER_ENTRY * 8
+	MAX_ENTRY       = ^EntryT(0)
 )
 
+type EntryIndex struct {
+	Idx    int
+	Offset int
+}
+
+type ByteIndex struct {
+	Idx    int
+	Offset int
+}
+
 type ValidityMask struct {
-	Data *bytes.Buffer
+	Data []byte
 }
