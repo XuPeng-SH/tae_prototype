@@ -52,14 +52,18 @@ func New(count int, options ...Option) *ValidityMask {
 		*vm = option(*vm)
 	}
 	if len(vm.Data) == 0 && cap(vm.Data) != 0 {
-		arr := make([]byte, 8)
-		binary.BigEndian.PutUint64(arr, uint64(MAX_ENTRY))
-		for i := 0; i < cap(vm.Data); i += BYTES_PER_ENTRY {
-			vm.Data = append(vm.Data, arr...)
-		}
+		vm.InitAllValid()
 	}
 
 	return vm
+}
+
+func (vm *ValidityMask) InitAllValid() {
+	arr := make([]byte, 8)
+	binary.BigEndian.PutUint64(arr, uint64(MAX_ENTRY))
+	for i := 0; i < cap(vm.Data); i += BYTES_PER_ENTRY {
+		vm.Data = append(vm.Data, arr...)
+	}
 }
 
 func (vm *ValidityMask) Init(count int) {
@@ -174,6 +178,31 @@ func (vm *ValidityMask) AllValid() bool {
 		}
 	}
 	return true
+}
+
+func (vm *ValidityMask) Slice(other ValidityMask, offset int) {
+	if offset < 0 {
+		panic("")
+	}
+	if other.AllValid() {
+		vm.Reset()
+		return
+	}
+	if offset == 0 {
+		vm.Data = other.Data
+		return
+	}
+	vm.Init(constants.STANDARD_VECTOR_SIZE)
+	vm.InitAllValid()
+
+	all_units := offset / BITS_PER_ENTRY
+	// sub_units := offset - all_units%BITS_PER_ENTRY
+
+	if all_units != 0 {
+		for idx := 0; idx+all_units < STANDARD_ENTRY_COUNT; idx++ {
+			// vm.
+		}
+	}
 }
 
 func (ei *EntryIndex) ToString() string {
