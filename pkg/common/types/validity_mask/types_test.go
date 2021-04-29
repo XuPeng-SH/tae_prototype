@@ -36,6 +36,9 @@ func TestValidityMask1(t *testing.T) {
 	vm1.SetInvalid(row_id)
 	// t.Logf("vm1 row %d valid: %v", row_id, vm1.IsRowValid(row_id))
 	assert.False(t, vm1.IsRowValid(row_id))
+	e := vm1.GetEntry(GetEntryIndex(row_id).Idx)
+	t.Logf("entry: %v", e.ToString())
+	assert.True(t, vm1.IsRowValid(row_id+1))
 	vm1.SetValid(row_id)
 	assert.True(t, vm1.IsRowValid(row_id))
 
@@ -72,6 +75,7 @@ func TestValidityMask2(t *testing.T) {
 	assert.False(t, vm2.IsRowValid(100))
 	assert.False(t, vm2.IsRowValid(127))
 	assert.True(t, vm2.IsRowValid(128))
+	t.Log(vm2.ToString(129))
 	vm2.ValidateRows(100)
 	assert.True(t, vm2.IsRowValid(99))
 	assert.True(t, vm2.IsRowValid(100))

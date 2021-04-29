@@ -2,6 +2,7 @@ package validity_mask
 
 import (
 	"fmt"
+	"strconv"
 	// log "github.com/sirupsen/logrus"
 	"tae/pkg/common/types"
 	"tae/pkg/common/types/constants"
@@ -31,6 +32,25 @@ func (e *EntryT) AllValid() bool {
 
 func (e *EntryT) NoneValid() bool {
 	return *e == 0
+}
+
+func (e *EntryT) ToString() string {
+	ret := "Entry ("
+	if *e == 0 {
+		ret += "--"
+	} else if *e == MAX_ENTRY {
+		ret += "++"
+	} else {
+		for i := BITS_PER_ENTRY - 1; i >= 0; i-- {
+			if *e&(EntryT(1)<<i) > 0 {
+				ret += "."
+			} else {
+				ret += "X"
+			}
+		}
+	}
+	ret += ")"
+	return ret
 }
 
 type Option func(ValidityMask) ValidityMask
@@ -180,17 +200,48 @@ func (vm *ValidityMask) Slice(other ValidityMask, offset int) {
 
 	if all_units != 0 {
 		for idx := 0; idx+all_units < STANDARD_ENTRY_COUNT; idx++ {
-			start := idx * BYTES_PER_ENTRY
-			end := (idx + 1) * BYTES_PER_ENTRY
-			o_start := (idx + all_units) * BYTES_PER_ENTRY
-			o_end := (idx + all_units + 1) * BYTES_PER_ENTRY
-			copy(vm.Data[start:end], other.Data[o_start:o_end])
+			vm.Data[idx] = other.Data[idx+all_units]
 		}
 	}
 	if sub_units := offset - all_units%BITS_PER_ENTRY; sub_units > 0 {
-		for idx := 0; idx+1 < STANDARD_ENTRY_COUNT; idx++ {
+		idx := 0
+		for ; idx+1 < STANDARD_ENTRY_COUNT; idx++ {
+			vm.Data[idx] = (other.Data[idx] >> sub_units) | (other.Data[idx+1] << (BITS_PER_ENTRY - sub_units))
+		}
+		vm.Data[idx] >>= sub_units
+	}
+}
+
+func (vm *ValidityMask) Combine(other ValidityMask, count int) {
+	if other.AllValid() {
+		return
+	}
+	if vm.AllValid() {
+		vm.Data = other.Data
+		return
+	}
+	old_data := vm.Data
+	vm.Init(constants.STANDARD_VECTOR_SIZE)
+	vm.InitAllValid()
+
+	ei := GetEntryIndex(count)
+	for i := 0; i <= ei.Idx; i++ {
+		vm.Data[i] = old_data[i] & other.Data[i]
+	}
+}
+
+func (vm *ValidityMask) ToString(count int) string {
+	ret := "ValidityMask (" + strconv.Itoa(count) + ")["
+	for i := 0; i < count; i++ {
+		if vm.IsRowValid(i) {
+			ret += "."
+		} else {
+			ret += "X"
 		}
 	}
+
+	ret += "]"
+	return ret
 }
 
 func (ei *EntryIndex) ToString() string {
