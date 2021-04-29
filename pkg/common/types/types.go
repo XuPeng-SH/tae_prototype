@@ -32,8 +32,8 @@ const (
 	TIME      = 16
 	TIMESTAMP = 17
 	DECIMAL   = 18
-	FLOAT     = 19
-	DOUBLE    = 20
+	FLOAT32   = 19
+	FLOAT64   = 20
 	CHAR      = 21
 	VARCHAR   = 22
 	BLOB      = 24

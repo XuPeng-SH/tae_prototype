@@ -8,7 +8,7 @@ import (
 
 func NewVector(options ...Option) *Vector {
 	v := &Vector{
-		Buff: vbuff.NewVectorBuffer(vbuff.WithItemType(types.NA)),
+		Buff: vbuff.NewVectorBuffer(vbuff.WithItemType(types.P_INVALID)),
 		Type: FLAT_VECTOR,
 	}
 	for _, option := range options {
