@@ -1,9 +1,6 @@
 package validity_mask
 
 import (
-	"bytes"
-	"encoding/binary"
-
 	"fmt"
 	// log "github.com/sirupsen/logrus"
 	"tae/pkg/common/types"
@@ -18,13 +15,6 @@ func GetEntryIndex(row_idx int) EntryIndex {
 	ei.Idx = row_idx / BITS_PER_ENTRY
 	ei.Offset = row_idx % BITS_PER_ENTRY
 	return ei
-}
-
-func GetByteIndex(row_idx int) ByteIndex {
-	bi := ByteIndex{}
-	bi.Idx = row_idx / 8
-	bi.Offset = row_idx % 8
-	return bi
 }
 
 func (e *EntryT) IsValid(idx int) bool {
@@ -59,10 +49,8 @@ func New(count int, options ...Option) *ValidityMask {
 }
 
 func (vm *ValidityMask) InitAllValid() {
-	arr := make([]byte, 8)
-	binary.BigEndian.PutUint64(arr, uint64(MAX_ENTRY))
-	for i := 0; i < cap(vm.Data); i += BYTES_PER_ENTRY {
-		vm.Data = append(vm.Data, arr...)
+	for i := 0; i < cap(vm.Data); i++ {
+		vm.Data = append(vm.Data, MAX_ENTRY)
 	}
 }
 
@@ -77,16 +65,12 @@ func (vm *ValidityMask) Init(count int) {
 	if count == 0 {
 		return
 	}
-	entry_count := (int)(WhichEntry((types.IDX_T)(count))) * BYTES_PER_ENTRY
-	vm.Data = make([]byte, 0, entry_count)
+	entry_count := (int)(WhichEntry((types.IDX_T)(count)))
+	vm.Data = make([]EntryT, 0, entry_count)
 }
 
 func (vm *ValidityMask) Len() int {
 	return len(vm.Data)
-}
-
-func (vm *ValidityMask) Entries() int {
-	return vm.Len() / BYTES_PER_ENTRY
 }
 
 func (vm *ValidityMask) Reset() {
@@ -94,22 +78,19 @@ func (vm *ValidityMask) Reset() {
 }
 
 func (vm *ValidityMask) GetEntry(entry_idx int) EntryT {
-	if entry_idx >= vm.Entries() {
+	if entry_idx >= vm.Len() {
 		return MAX_ENTRY
 	}
 
-	var entry EntryT
-	r := bytes.NewReader(vm.Data[entry_idx*BYTES_PER_ENTRY:])
-	binary.Read(r, binary.BigEndian, &entry)
-	return entry
+	return vm.Data[entry_idx]
 }
 
 func (vm *ValidityMask) SetInvalid(row_idx int) {
-	bi := GetByteIndex(row_idx)
-	if bi.Idx >= vm.Len() {
+	ei := GetEntryIndex(row_idx)
+	if ei.Idx >= vm.Len() {
 		return
 	}
-	vm.Data[bi.Idx] &= ^(byte(1) << bi.Offset)
+	vm.Data[ei.Idx] &= ^(EntryT(1) << ei.Offset)
 }
 
 func (vm *ValidityMask) ValidateRows(rows int) {
@@ -121,9 +102,8 @@ func (vm *ValidityMask) ValidateRows(rows int) {
 	}
 
 	ei := GetEntryIndex(rows)
-	idx := (ei.Idx + 1) * BYTES_PER_ENTRY
-	for i := 0; i < idx; i++ {
-		vm.Data[i] = byte(0xff)
+	for i := 0; i <= ei.Idx; i++ {
+		vm.Data[i] = MAX_ENTRY
 	}
 }
 
@@ -137,9 +117,10 @@ func (vm *ValidityMask) InvalidateRows(rows int) {
 	if vm.Len() == 0 {
 		vm.Init(rows)
 	}
+
 	ei := GetEntryIndex(rows)
-	idx := (ei.Idx + 1) * BYTES_PER_ENTRY
-	for i := 0; i < idx; i++ {
+	// log.Info(ei.ToString())
+	for i := 0; i <= ei.Idx; i++ {
 		vm.Data[i] = 0
 	}
 }
@@ -148,23 +129,23 @@ func (vm *ValidityMask) SetValid(row_idx int) {
 	if vm.Len() == 0 {
 		return
 	}
-	bi := GetByteIndex(row_idx)
-	if bi.Idx >= vm.Len() {
+	ei := GetEntryIndex(row_idx)
+	if ei.Idx >= vm.Len() {
 		return
 	}
-	vm.Data[bi.Idx] |= byte(1) << bi.Offset
+	vm.Data[ei.Idx] |= EntryT(1) << ei.Offset
 }
 
 func (vm *ValidityMask) IsRowValid(row_idx int) bool {
 	if vm.Len() == 0 {
 		return true
 	}
-	bi := GetByteIndex(row_idx)
-	if bi.Idx >= vm.Len() {
+	ei := GetEntryIndex(row_idx)
+	if ei.Idx >= vm.Len() {
 		return true
 	}
 
-	val := vm.Data[bi.Idx] & (byte(1) << byte(bi.Offset))
+	val := vm.Data[ei.Idx] & (EntryT(1) << ei.Offset)
 	return val > 0
 }
 
@@ -196,21 +177,24 @@ func (vm *ValidityMask) Slice(other ValidityMask, offset int) {
 	vm.InitAllValid()
 
 	all_units := offset / BITS_PER_ENTRY
-	// sub_units := offset - all_units%BITS_PER_ENTRY
 
 	if all_units != 0 {
 		for idx := 0; idx+all_units < STANDARD_ENTRY_COUNT; idx++ {
-			// vm.
+			start := idx * BYTES_PER_ENTRY
+			end := (idx + 1) * BYTES_PER_ENTRY
+			o_start := (idx + all_units) * BYTES_PER_ENTRY
+			o_end := (idx + all_units + 1) * BYTES_PER_ENTRY
+			copy(vm.Data[start:end], other.Data[o_start:o_end])
+		}
+	}
+	if sub_units := offset - all_units%BITS_PER_ENTRY; sub_units > 0 {
+		for idx := 0; idx+1 < STANDARD_ENTRY_COUNT; idx++ {
 		}
 	}
 }
 
 func (ei *EntryIndex) ToString() string {
 	return fmt.Sprintf("EntryIndex<%d, %d>", ei.Idx, ei.Offset)
-}
-
-func (bi *ByteIndex) ToString() string {
-	return fmt.Sprintf("ByteIndex<%d, %d>", bi.Idx, bi.Offset)
 }
 
 func WithOriginal(original ValidityMask) Option {

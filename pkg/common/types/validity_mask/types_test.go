@@ -16,7 +16,7 @@ func TestValidityMask1(t *testing.T) {
 	assert.Equal(t, ei.Offset, 18)
 
 	vm1 := New(100)
-	assert.Equal(t, vm1.Len(), 16)
+	assert.Equal(t, vm1.Len(), 2)
 
 	var entry EntryT = 0x5
 	assert.True(t, entry.IsValid(0))
@@ -28,7 +28,7 @@ func TestValidityMask1(t *testing.T) {
 	assert.True(t, entry.AllValid())
 
 	entry = vm1.GetEntry(1)
-	assert.Equal(t, vm1.Entries(), 2)
+	assert.Equal(t, vm1.Len(), 2)
 
 	row_id := 50
 	// t.Logf("vm1 row %d valid: %v", row_id, vm1.IsRowValid(row_id))
@@ -41,7 +41,6 @@ func TestValidityMask1(t *testing.T) {
 
 	vm1.Reset()
 	assert.Equal(t, vm1.Len(), 0)
-	assert.Equal(t, vm1.Entries(), 0)
 
 	// buff := new(bytes.Buffer)
 	// buff.WriteString("hello")
@@ -63,7 +62,7 @@ func TestValidityMask2(t *testing.T) {
 	assert.Equal(t, vm1.Len(), 0)
 
 	vm2 := New(200)
-	assert.Equal(t, vm2.Len(), 32)
+	assert.Equal(t, vm2.Len(), 4)
 	assert.True(t, vm2.IsRowValid(99))
 	assert.True(t, vm2.IsRowValid(100))
 	assert.True(t, vm2.IsRowValid(127))

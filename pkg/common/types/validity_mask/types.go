@@ -19,11 +19,6 @@ type EntryIndex struct {
 	Offset int
 }
 
-type ByteIndex struct {
-	Idx    int
-	Offset int
-}
-
 type ValidityMask struct {
-	Data []byte
+	Data []EntryT
 }
