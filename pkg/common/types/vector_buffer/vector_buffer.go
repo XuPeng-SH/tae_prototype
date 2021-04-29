@@ -1,12 +1,13 @@
 package vector_buffer
 
 import (
-	"bytes"
 	"tae/pkg/common/types"
 )
 
 func New(options ...Option) *VectorBuffer {
-	vf := &VectorBuffer{}
+	vf := &VectorBuffer{
+		Type: STANDARD_BUFFER,
+	}
 	for _, option := range options {
 		*vf = option(*vf)
 	}
@@ -15,18 +16,12 @@ func New(options ...Option) *VectorBuffer {
 
 type Option func(VectorBuffer) VectorBuffer
 
-func WithBufferType(vbt VectorBufferType) Option {
-	return func(vf VectorBuffer) VectorBuffer {
-		vf.Type = vbt
-		return vf
-	}
-}
-
 func WithSize(size int) Option {
 	return func(vf VectorBuffer) VectorBuffer {
-		vf.Buff = new(bytes.Buffer)
-		vf.Buff.Grow(size)
-		vf.Type = STANDARD_BUFFER
+		if size < 0 {
+			panic("")
+		}
+		vf.Data = make([]byte, 0, size)
 		return vf
 	}
 }
@@ -36,4 +31,8 @@ func WithItemType(itype types.PhysicalType) Option {
 		vf.ItemType = itype
 		return vf
 	}
+}
+
+func (vf *VectorBuffer) GetType() VectorBufferType {
+	return vf.Type
 }

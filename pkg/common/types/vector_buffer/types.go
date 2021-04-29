@@ -1,7 +1,6 @@
 package vector_buffer
 
 import (
-	"bytes"
 	"tae/pkg/common/types"
 )
 
@@ -18,6 +17,6 @@ const (
 
 type VectorBuffer struct {
 	Type     VectorBufferType
-	Buff     *bytes.Buffer
+	Data     []byte
 	ItemType types.PhysicalType
 }

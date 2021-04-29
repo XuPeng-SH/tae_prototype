@@ -1,7 +1,6 @@
 package selection_vector
 
 import (
-	"bytes"
 	"unsafe"
 )
 
@@ -11,6 +10,10 @@ const (
 	EntryBytes = (uint)(unsafe.Sizeof(EntryT(0)))
 )
 
+type SelectionData struct {
+	Data []EntryT
+}
+
 type SelectionVector struct {
-	Data *bytes.Buffer
+	Data *SelectionData
 }
