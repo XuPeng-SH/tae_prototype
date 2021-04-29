@@ -4,7 +4,7 @@ import (
 	"tae/pkg/common/types"
 )
 
-func New(options ...Option) *VectorBuffer {
+func NewVectorBuffer(options ...Option) *VectorBuffer {
 	vf := &VectorBuffer{
 		Type: STANDARD_BUFFER,
 	}
@@ -22,6 +22,13 @@ func WithSize(size int) Option {
 			panic("")
 		}
 		vf.Data = make([]byte, 0, size)
+		return vf
+	}
+}
+
+func WithType(t VectorBufferType) Option {
+	return func(vf VectorBuffer) VectorBuffer {
+		vf.Type = t
 		return vf
 	}
 }

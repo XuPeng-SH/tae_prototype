@@ -2,6 +2,8 @@ package vector
 
 import (
 	"fmt"
+	vmask "tae/pkg/common/types/validity_mask"
+	vbuff "tae/pkg/common/types/vector_buffer"
 )
 
 type VectorType uint8
@@ -28,6 +30,8 @@ func (vt VectorType) String() string {
 }
 
 type Vector struct {
-	Buff      []byte // The main buffer holding the data of the vector
-	ExtraBuff []byte // The buffer holding extra data of the vector
+	Buff *vbuff.VectorBuffer // The main buffer holding the data of the vector
+	// ExtraBuff *vbuff.VectorBuffer // The buffer holding extra data of the vector
+	Validity *vmask.ValidityMask
+	Type     VectorType
 }
