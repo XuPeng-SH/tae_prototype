@@ -30,7 +30,7 @@ func (vt VectorType) String() string {
 }
 
 type Vector struct {
-	Buff *vbuff.VectorBuffer // The main buffer holding the data of the vector
+	Buff vbuff.IVectorBuffer // The main buffer holding the data of the vector
 	// ExtraBuff *vbuff.VectorBuffer // The buffer holding extra data of the vector
 	Validity *vmask.ValidityMask
 	Type     VectorType
