@@ -32,3 +32,12 @@ func TestBoolean(t *testing.T) {
 	v1 := vf1.GetValue(0)
 	assert.Equal(t, v1, v0)
 }
+
+func TestFloat32(t *testing.T) {
+	vf1 := NewVectorBuffer(WithItemType(types.LT_FLOAT32), WithSize((int)(types.LT_FLOAT32.GetPhysicalType().Size())))
+	assert.Equal(t, vf1.Size(), (int)(types.PSIZE_FLOAT32))
+	v0 := float32(-120.34)
+	vf1.SetValue(0, v0)
+	v1 := vf1.GetValue(0)
+	assert.Equal(t, v1, v0)
+}

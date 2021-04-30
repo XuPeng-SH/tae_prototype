@@ -74,6 +74,10 @@ func (lt *LogicType) GetPhysicalType() PhysicalType {
 		return P_INT64
 	case UBIGINT:
 		return P_UINT64
+	case FLOAT32:
+		return P_FLOAT32
+	case FLOAT64:
+		return P_FLOAT64
 	case INVALID:
 		return P_INVALID
 	case UNKNOWN:
