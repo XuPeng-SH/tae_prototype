@@ -5,6 +5,7 @@ import (
 	"tae/pkg/common/types/value"
 	// vmask "tae/pkg/common/types/validity_mask"
 	// "fmt"
+	svec "tae/pkg/common/types/selection_vector"
 	vbuff "tae/pkg/common/types/vector_buffer"
 )
 
@@ -44,7 +45,7 @@ func (vec *Vector) ReferenceOther(other Vector, offset int) {
 	vec.Validity.Slice(*other.Validity, offset)
 }
 
-func (vec *Vector) Slice(other Vector, offset int) {
+func (vec *Vector) SliceOther(other Vector, offset int) {
 	if other.Type == CONSTANT_VECTOR {
 		vec.ReferenceOther(other, 0)
 	}
@@ -52,6 +53,18 @@ func (vec *Vector) Slice(other Vector, offset int) {
 		panic("Slice should only on FLAT_VECTOR")
 	}
 	vec.ReferenceOther(other, offset)
+}
+
+func (vec *Vector) SliceOtherWithSel(other Vector, sel svec.SelectionVector, count int) {
+	vec.ReferenceOther(other, 0)
+	vec.SliceWithSel(sel, count)
+}
+
+func (vec *Vector) SliceWithSel(sel svec.SelectionVector, count int) {
+	if vec.Type == CONSTANT_VECTOR {
+		return
+	}
+	// PXU TODO
 }
 
 func (vec *Vector) GetLogicType() types.LogicType {

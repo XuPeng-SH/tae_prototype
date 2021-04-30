@@ -8,6 +8,10 @@ import (
 	"tae/pkg/common/types"
 )
 
+var (
+	_ IVectorBuffer = (*VectorBuffer)(nil)
+)
+
 func NewVectorBuffer(options ...Option) *VectorBuffer {
 	vf := &VectorBuffer{
 		Type: STANDARD_BUFFER,
@@ -142,10 +146,11 @@ func (vb *VectorBuffer) MaxItems() int {
 	return len(vb.Data) / (int)(vb.ItemSize)
 }
 
-func (vb *VectorBuffer) ReferenceOther(other VectorBuffer, offset int) {
+func (vb *VectorBuffer) ReferenceOther(o interface{}, offset int) {
 	if offset < 0 || offset >= vb.MaxItems() {
 		panic(fmt.Sprintf("offset %d should be in [%d, %d)", offset, 0, vb.MaxItems()))
 	}
+	other := o.(VectorBuffer)
 	vb.Type = other.Type
 	vb.Data = other.Data[offset*(int)(other.ItemSize):]
 	vb.ItemType = other.ItemType
