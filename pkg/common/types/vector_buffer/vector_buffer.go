@@ -3,6 +3,7 @@ package vector_buffer
 import (
 	"encoding/binary"
 	"fmt"
+	log "github.com/sirupsen/logrus"
 	"math"
 	"tae/pkg/common/types"
 )
@@ -56,7 +57,46 @@ func (vf *VectorBuffer) Size() int {
 	return len(vf.Data)
 }
 
-func (vf *VectorBuffer) GetValue(idx int, val interface{}) {
+func (vf *VectorBuffer) GetValue(idx int) (ret interface{}) {
+	if idx < 0 || (idx+1)*(int)(vf.ItemSize) > len(vf.Data) {
+		msg := fmt.Sprintf("Invalid idx: %d, should be in range [0, %d)", idx, len(vf.Data)/(int)(vf.ItemSize))
+		log.Error(msg)
+		panic(msg)
+	}
+
+	switch vf.ItemType.GetID() {
+	case types.BOOLEAN:
+		if vf.Data[idx] > 0 {
+			ret = true
+		} else {
+			ret = false
+		}
+	case types.TINYINT:
+		ret = (int8)(vf.Data[idx])
+	case types.UTINYINT:
+		ret = (uint8)(vf.Data[idx])
+	case types.SMALLINT:
+		ret = (int16)(binary.BigEndian.Uint16(vf.Data[(idx * (int)(vf.ItemSize)):]))
+	case types.USMALLINT:
+		ret = binary.BigEndian.Uint16(vf.Data[(idx * (int)(vf.ItemSize)):])
+	case types.INTEGER:
+		ret = (int32)(binary.BigEndian.Uint32(vf.Data[(idx * (int)(vf.ItemSize)):]))
+	case types.UINTEGER:
+		ret = binary.BigEndian.Uint32(vf.Data[(idx * (int)(vf.ItemSize)):])
+	case types.BIGINT:
+		ret = (int64)(binary.BigEndian.Uint64(vf.Data[(idx * (int)(vf.ItemSize)):]))
+	case types.UBIGINT:
+		ret = binary.BigEndian.Uint64(vf.Data[(idx * (int)(vf.ItemSize)):])
+	case types.FLOAT32:
+		bytes := binary.BigEndian.Uint32(vf.Data[(idx * (int)(vf.ItemSize)):])
+		ret = math.Float32frombits(bytes)
+	case types.FLOAT64:
+		bytes := binary.BigEndian.Uint64(vf.Data[(idx * (int)(vf.ItemSize)):])
+		ret = math.Float64frombits(bytes)
+	default:
+		panic(fmt.Sprintf("UNIMPLEMENTED logic type: %v", vf.ItemType))
+	}
+	return ret
 }
 
 func (vf *VectorBuffer) SetValue(idx int, val interface{}) {
@@ -65,40 +105,35 @@ func (vf *VectorBuffer) SetValue(idx int, val interface{}) {
 	}
 	switch vf.ItemType.GetID() {
 	case types.BOOLEAN:
-		vf.Data[idx] = val.(byte)
-		return
+		v := val.(bool)
+		if v {
+			vf.Data[idx] = byte(1)
+		} else {
+			vf.Data[idx] = byte(0)
+		}
 	case types.TINYINT:
-		vf.Data[idx] = val.(byte)
-		return
+		vf.Data[idx] = byte(val.(int8))
 	case types.UTINYINT:
-		vf.Data[idx] = val.(byte)
-		return
+		vf.Data[idx] = byte(val.(uint8))
 	case types.SMALLINT:
 		binary.BigEndian.PutUint16(vf.Data[(idx*(int)(vf.ItemSize)):], (uint16)(val.(int16)))
-		return
 	case types.USMALLINT:
 		binary.BigEndian.PutUint16(vf.Data[(idx*(int)(vf.ItemSize)):], val.(uint16))
-		return
 	case types.INTEGER:
 		binary.BigEndian.PutUint32(vf.Data[(idx*(int)(vf.ItemSize)):], (uint32)(val.(int32)))
-		return
 	case types.UINTEGER:
 		binary.BigEndian.PutUint32(vf.Data[(idx*(int)(vf.ItemSize)):], val.(uint32))
-		return
 	case types.BIGINT:
 		binary.BigEndian.PutUint64(vf.Data[(idx*(int)(vf.ItemSize)):], (uint64)(val.(int64)))
-		return
 	case types.UBIGINT:
 		binary.BigEndian.PutUint64(vf.Data[(idx*(int)(vf.ItemSize)):], val.(uint64))
-		return
 	case types.FLOAT32:
 		f := val.(float32)
 		binary.BigEndian.PutUint32(vf.Data[(idx*(int)(vf.ItemSize)):], math.Float32bits(f))
-		return
 	case types.FLOAT64:
 		f := val.(float64)
 		binary.BigEndian.PutUint64(vf.Data[(idx*(int)(vf.ItemSize)):], math.Float64bits(f))
-		return
+	default:
+		panic(fmt.Sprintf("UNIMPLEMENTED logic type: %v", vf.ItemType))
 	}
-	panic(fmt.Sprintf("UNIMPLEMENTED logic type: %v", vf.ItemType))
 }
