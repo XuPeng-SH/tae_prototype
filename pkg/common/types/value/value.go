@@ -160,7 +160,7 @@ func (val *Value) Cast(lt types.LogicType, strict bool) *Value {
 
 func (val *Value) ToString() string {
 	if val.IsNull {
-		return fmt.Sprintf("Value [%s](NULL)", val.Type.ToString())
+		return fmt.Sprintf("Val[%s](NULL)", val.Type.ToString())
 	}
-	return fmt.Sprintf("Value [%s](%v)", val.Type.ToString(), val.GetValue())
+	return fmt.Sprintf("Val[%s](%v)", val.Type.ToString(), val.GetValue())
 }

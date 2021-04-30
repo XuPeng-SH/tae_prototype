@@ -137,3 +137,17 @@ func (vf *VectorBuffer) SetValue(idx int, val interface{}) {
 		panic(fmt.Sprintf("UNIMPLEMENTED logic type: %v", vf.ItemType))
 	}
 }
+
+func (vb *VectorBuffer) MaxItems() int {
+	return len(vb.Data) / (int)(vb.ItemSize)
+}
+
+func (vb *VectorBuffer) ReferenceOther(other VectorBuffer, offset int) {
+	if offset < 0 || offset >= vb.MaxItems() {
+		panic(fmt.Sprintf("offset %d should be in [%d, %d)", offset, 0, vb.MaxItems()))
+	}
+	vb.Type = other.Type
+	vb.Data = other.Data[offset*(int)(other.ItemSize):]
+	vb.ItemType = other.ItemType
+	vb.ItemSize = other.ItemSize
+}
