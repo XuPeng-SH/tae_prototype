@@ -41,3 +41,10 @@ func TestFloat32(t *testing.T) {
 	v1 := vf1.GetValue(0)
 	assert.Equal(t, v1, v0)
 }
+
+func TestDictBuff(t *testing.T) {
+	dbuff := NewDictonaryBuffer(WithDictBuffCount(20), WithDictBuffItemType(types.LT_FLOAT32))
+	assert.Equal(t, dbuff.GetType(), DICTIONARY_BUFFER)
+	assert.Equal(t, dbuff.GetItemType(), types.LT_FLOAT32)
+	t.Log(dbuff.SelVec.ToString(10))
+}

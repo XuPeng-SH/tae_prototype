@@ -15,6 +15,24 @@ const (
 	LIST_BUFFER
 )
 
+func (vt VectorBufferType) ToString() string {
+	switch vt {
+	case STANDARD_BUFFER:
+		return "STANDARD_BUFFER"
+	case DICTIONARY_BUFFER:
+		return "DICTIONARY_BUFFER"
+	case VECTOR_CHILD_BUFFER:
+		return "VECTOR_CHILD_BUFFER"
+	case STRING_BUFFER:
+		return "STRING_BUFFER"
+	case STRUCT_BUFFER:
+		return "STRUCT_BUFFER"
+	case LIST_BUFFER:
+		return "LIST_BUFFER"
+	}
+	panic("")
+}
+
 type IVectorBuffer interface {
 	Size() int
 	MaxItems() int

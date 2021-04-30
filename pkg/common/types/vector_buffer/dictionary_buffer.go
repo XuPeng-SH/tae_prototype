@@ -10,6 +10,10 @@ type DictionaryBuffer struct {
 	SelVec *SV.SelectionVector
 }
 
+var (
+	_ IVectorBuffer = (*DictionaryBuffer)(nil)
+)
+
 func NewDictonaryBuffer(options ...DictBuffOption) *DictionaryBuffer {
 	sv := &DictionaryBuffer{
 		VectorBuffer: *NewVectorBuffer(WithType(DICTIONARY_BUFFER)),
@@ -37,7 +41,7 @@ func WithDictBuffSelectionVector(sv SV.SelectionVector) DictBuffOption {
 	}
 }
 
-func WithBuffWithItemType(lt types.LogicType) DictBuffOption {
+func WithDictBuffItemType(lt types.LogicType) DictBuffOption {
 	return func(db DictionaryBuffer) DictionaryBuffer {
 		db.VectorBuffer.ItemType = lt
 		return db

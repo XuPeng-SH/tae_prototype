@@ -64,7 +64,9 @@ func (vec *Vector) SliceWithSel(sel svec.SelectionVector, count int) {
 	if vec.Type == CONSTANT_VECTOR {
 		return
 	}
-	// PXU TODO
+	vec.Buff = vbuff.NewDictonaryBuffer(vbuff.WithDictBuffItemType(vec.Buff.GetItemType()),
+		vbuff.WithDictBuffSelectionVector(sel))
+	vec.Type = DICTIONARY_VECTOR
 }
 
 func (vec *Vector) GetLogicType() types.LogicType {
