@@ -41,7 +41,7 @@ func (vec *Vector) ReferenceOther(other Vector, offset int) {
 	}
 
 	vec.Buff.ReferenceOther(*other.Buff, offset)
-
+	vec.Validity.Slice(*other.Validity, offset)
 }
 
 func (vec *Vector) Slice(other Vector, offset int) {
