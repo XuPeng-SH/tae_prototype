@@ -1,6 +1,8 @@
 package types
 
-import ()
+import (
+	"fmt"
+)
 
 var (
 	LT_INVALID   = LogicType{LType: INVALID}
@@ -58,6 +60,24 @@ func (lt *LogicType) getPhysicalType() PhysicalType {
 		return P_BOOL
 	case TINYINT:
 		return P_INT8
+	case UTINYINT:
+		return P_UINT8
+	case SMALLINT:
+		return P_INT16
+	case USMALLINT:
+		return P_UINT16
+	case INTEGER:
+		return P_INT32
+	case UINTEGER:
+		return P_UINT32
+	case BIGINT:
+		return P_INT64
+	case UBIGINT:
+		return P_UINT64
+	case INVALID:
+		return P_INVALID
+	case UNKNOWN:
+		return P_INVALID
 	}
-	return P_INVALID
+	panic(fmt.Sprintf("UNKNOWN type: %v", lt.LType))
 }
