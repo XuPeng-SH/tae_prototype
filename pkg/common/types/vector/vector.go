@@ -4,7 +4,7 @@ import (
 	"tae/pkg/common/types"
 	"tae/pkg/common/types/value"
 	// vmask "tae/pkg/common/types/validity_mask"
-	"fmt"
+	// "fmt"
 	vbuff "tae/pkg/common/types/vector_buffer"
 )
 
@@ -42,9 +42,5 @@ func (vec *Vector) SetValue(idx int, val value.Value) {
 		return
 	}
 
-	switch lt.GetID() {
-	// case types.BOOLEAN:
-
-	}
-	panic(fmt.Sprintf("UNKNOWN logic type: %v", lt))
+	vec.Buff.SetValue(idx, val.GetData())
 }
