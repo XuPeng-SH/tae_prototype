@@ -140,3 +140,27 @@ func (val *Value) GetLogicType() types.LogicType {
 func (val *Value) GetPhysicalTypeSize() uint8 {
 	return val.Type.GetPhysicalType().Size()
 }
+
+func (val *Value) Clone() *Value {
+	ret := &Value{
+		Type:   val.Type,
+		IsNull: val.IsNull,
+		Data:   make([]byte, len(val.Data)),
+	}
+	copy(ret.Data, val.Data)
+	return ret
+}
+
+func (val *Value) Cast(lt types.LogicType, strict bool) *Value {
+	if val.Type == lt {
+		return val.Clone()
+	}
+	return nil
+}
+
+func (val *Value) ToString() string {
+	if val.IsNull {
+		return fmt.Sprintf("Value [%s](NULL)", val.Type.ToString())
+	}
+	return fmt.Sprintf("Value [%s](%v)", val.Type.ToString(), val.GetValue())
+}

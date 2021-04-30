@@ -89,3 +89,42 @@ func (lt *LogicType) GetPhysicalType() PhysicalType {
 func (lt *LogicType) GetID() LogicalTypeId {
 	return lt.LType
 }
+
+func (lt *LogicType) ToString() string {
+	return lt.LType.ToString()
+}
+
+func (lti LogicalTypeId) ToString() string {
+	switch lti {
+	case BOOLEAN:
+		return "BOOLEAN"
+	case TINYINT:
+		return "TINYINT"
+	case UTINYINT:
+		return "UTINYINT"
+	case SMALLINT:
+		return "SMALLINT"
+	case USMALLINT:
+		return "USMALLINT"
+	case INTEGER:
+		return "INTEGER"
+	case UINTEGER:
+		return "UINTEGER"
+	case BIGINT:
+		return "BIGINT"
+	case UBIGINT:
+		return "UBIGINT"
+	case FLOAT32:
+		return "FLOAT32"
+	case FLOAT64:
+		return "FLOAT64"
+	case SQLNULL:
+		return "NULL"
+	case INVALID:
+		return "INVALID"
+	case UNKNOWN:
+		return "UNKNOWN"
+	}
+	// panic(fmt.Sprintf("UNKNOWN type id: %v", lti))
+	return "UNDEFINED"
+}
