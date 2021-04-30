@@ -19,4 +19,5 @@ type VectorBuffer struct {
 	Type     VectorBufferType
 	Data     []byte
 	ItemType types.LogicType
+	ItemSize uint8
 }

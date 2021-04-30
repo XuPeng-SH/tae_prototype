@@ -4,6 +4,7 @@ import (
 	"tae/pkg/common/types"
 	"tae/pkg/common/types/value"
 	// vmask "tae/pkg/common/types/validity_mask"
+	"fmt"
 	vbuff "tae/pkg/common/types/vector_buffer"
 )
 
@@ -22,11 +23,28 @@ type Option func(Vector) Vector
 
 func WithInitByValue(val value.Value) Option {
 	return func(vec Vector) Vector {
-		// vec.Buff = vbuff.NewVectorBuffer(vbuff.WithSize())
+		lt := val.GetLogicType()
+		vec.Buff = vbuff.NewVectorBuffer(vbuff.WithItemType(lt),
+			vbuff.WithSize((int)(lt.GetPhysicalType().Size())))
+		vec.SetValue(0, val)
 		return vec
 	}
 }
 
+func (vec *Vector) GetLogicType() types.LogicType {
+	return vec.Buff.GetItemType()
+}
+
 func (vec *Vector) SetValue(idx int, val value.Value) {
-	// TODO
+	lt := vec.GetLogicType()
+	if lt != val.GetLogicType() {
+		// PXU TODO: Try Cast
+		return
+	}
+
+	switch lt.GetID() {
+	// case types.BOOLEAN:
+
+	}
+	panic(fmt.Sprintf("UNKNOWN logic type: %v", lt))
 }

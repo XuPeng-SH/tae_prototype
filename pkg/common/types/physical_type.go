@@ -4,8 +4,8 @@ import (
 	"fmt"
 )
 
-func (pt *PhysicalType) Size() uint8 {
-	switch *pt {
+func (pt PhysicalType) Size() uint8 {
+	switch pt {
 	case P_INVALID:
 		return PSIZE_INVALID
 	case P_BOOL:
@@ -33,11 +33,11 @@ func (pt *PhysicalType) Size() uint8 {
 	case P_FLOAT64:
 		return PSIZE_FLOAT64
 	}
-	panic(fmt.Sprintf("UNKNOWN physical type: %v", *pt))
+	panic(fmt.Sprintf("UNKNOWN physical type: %v", pt))
 }
 
-func (pt *PhysicalType) ToString() string {
-	switch *pt {
+func (pt PhysicalType) ToString() string {
+	switch pt {
 	case P_INVALID:
 		return "INVALID"
 	case P_BOOL:
@@ -65,32 +65,32 @@ func (pt *PhysicalType) ToString() string {
 	case P_FLOAT64:
 		return "FLOAT64"
 	}
-	panic(fmt.Sprintf("UNKNOWN physical type: %v", *pt))
+	panic(fmt.Sprintf("UNKNOWN physical type: %v", pt))
 }
 
-func (pt *PhysicalType) IsConstantSize() bool {
-	if *pt >= P_BOOL && *pt <= P_FLOAT64 {
+func (pt PhysicalType) IsConstantSize() bool {
+	if pt >= P_BOOL && pt <= P_FLOAT64 {
 		return true
 	}
 	return false
 }
 
-func (pt *PhysicalType) IsNumeric() bool {
-	if *pt >= P_UINT8 && *pt <= P_FLOAT64 {
+func (pt PhysicalType) IsNumeric() bool {
+	if pt >= P_UINT8 && pt <= P_FLOAT64 {
 		return true
 	}
 	return false
 }
 
-func (pt *PhysicalType) IsIntegral() bool {
-	if *pt >= P_UINT8 && *pt <= P_INT {
+func (pt PhysicalType) IsIntegral() bool {
+	if pt >= P_UINT8 && pt <= P_INT {
 		return true
 	}
 	return false
 }
 
-func (pt *PhysicalType) IsInteger() bool {
-	if *pt >= P_UINT8 && *pt <= P_INT {
+func (pt PhysicalType) IsInteger() bool {
+	if pt >= P_UINT8 && pt <= P_INT {
 		return true
 	}
 	return false

@@ -129,5 +129,10 @@ func (v *Value) GetValue() (ret interface{}) {
 	return ret
 }
 
-// func Min(lt LogicType) Value {
-// }
+func (val *Value) GetLogicType() types.LogicType {
+	return val.Type
+}
+
+func (val *Value) GetPhysicalTypeSize() uint8 {
+	return val.Type.GetPhysicalType().Size()
+}
