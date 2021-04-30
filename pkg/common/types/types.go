@@ -1,6 +1,8 @@
 package types
 
-import ()
+import (
+	"unsafe"
+)
 
 type IDX_T uint64
 type PhysicalType uint8
@@ -12,7 +14,31 @@ const (
 	P_INT8
 	P_UINT16
 	P_INT16
+	P_UINT32
+	P_INT32
+	P_UINT64
+	P_INT64
+	P_INT
+	P_FLOAT32
+	P_FLOAT64
 	P_INVALID
+)
+
+const (
+	PSIZE_NA      = uint8(0)
+	PSIZE_BOOL    = (uint8)(unsafe.Sizeof(false))
+	PSIZE_UINT8   = (uint8)(unsafe.Sizeof(uint8(0)))
+	PSIZE_INT8    = (uint8)(unsafe.Sizeof(int8(0)))
+	PSIZE_UINT16  = (uint8)(unsafe.Sizeof(uint16(0)))
+	PSIZE_INT16   = (uint8)(unsafe.Sizeof(int16(0)))
+	PSIZE_UINT32  = (uint8)(unsafe.Sizeof(uint32(0)))
+	PSIZE_INT32   = (uint8)(unsafe.Sizeof(int32(0)))
+	PSIZE_UINT64  = (uint8)(unsafe.Sizeof(uint64(0)))
+	PSIZE_INT64   = (uint8)(unsafe.Sizeof(int64(0)))
+	PSIZE_INT     = (uint8)(unsafe.Sizeof(int(0)))
+	PSIZE_FLOAT32 = (uint8)(unsafe.Sizeof(float32(0)))
+	PSIZE_FLOAT64 = (uint8)(unsafe.Sizeof(float64(0)))
+	PSIZE_INVALID = uint8(0)
 )
 
 type LogicalTypeId uint8

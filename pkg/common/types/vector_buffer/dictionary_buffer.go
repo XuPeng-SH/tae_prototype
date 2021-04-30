@@ -37,9 +37,9 @@ func WithDictBuffSelectionVector(sv SV.SelectionVector) DictBuffOption {
 	}
 }
 
-func WithBuffWithItemType(itype types.PhysicalType) DictBuffOption {
+func WithBuffWithItemType(lt types.LogicType) DictBuffOption {
 	return func(db DictionaryBuffer) DictionaryBuffer {
-		db.VectorBuffer.ItemType = itype
+		db.VectorBuffer.ItemType = lt
 		return db
 	}
 }

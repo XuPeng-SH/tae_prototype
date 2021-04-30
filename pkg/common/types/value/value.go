@@ -11,16 +11,16 @@ import (
 func NewValue(vs ...interface{}) *Value {
 	val := &Value{IsNull: true}
 	if len(vs) == 0 {
-		val.Type = *(types.NewLogicType(types.WithLogicTypeId(types.SQLNULL)))
+		val.Type = types.LT_SQLNULL
 		return val
 	}
 	switch x := vs[0].(type) {
 	case nil:
-		val.Type = *(types.NewLogicType(types.WithLogicTypeId(types.SQLNULL)))
+		val.Type = types.LT_SQLNULL
 	case types.LogicType:
 		val.Type = x
 	case bool:
-		val.Type = *(types.NewLogicType(types.WithLogicTypeId(types.BOOLEAN)))
+		val.Type = types.LT_BOOLEAN
 		val.Val.Data = make([]byte, 1)
 		if x {
 			val.Val.Data[0] = byte(1)
@@ -29,58 +29,58 @@ func NewValue(vs ...interface{}) *Value {
 		}
 		val.IsNull = false
 	case int8:
-		val.Type = *(types.NewLogicType(types.WithLogicTypeId(types.TINYINT)))
+		val.Type = types.LT_TINYINT
 		val.Val.Data = make([]byte, 1)
 		val.Val.Data[0] = byte(x)
 		val.IsNull = false
 	case uint8:
-		val.Type = *(types.NewLogicType(types.WithLogicTypeId(types.UTINYINT)))
+		val.Type = types.LT_UTINYINT
 		val.Val.Data = make([]byte, 1)
 		val.Val.Data[0] = byte(x)
 		val.IsNull = false
 	case int16:
-		val.Type = *(types.NewLogicType(types.WithLogicTypeId(types.SMALLINT)))
+		val.Type = types.LT_SMALLINT
 		val.Val.Data = make([]byte, 2)
 		binary.BigEndian.PutUint16(val.Val.Data, uint16(x))
 		val.IsNull = false
 	case uint16:
-		val.Type = *(types.NewLogicType(types.WithLogicTypeId(types.USMALLINT)))
+		val.Type = types.LT_USMALLINT
 		val.Val.Data = make([]byte, 2)
 		binary.BigEndian.PutUint16(val.Val.Data, uint16(x))
 		val.IsNull = false
 	case int32:
-		val.Type = *(types.NewLogicType(types.WithLogicTypeId(types.INTEGER)))
+		val.Type = types.LT_INTEGER
 		val.Val.Data = make([]byte, 4)
 		binary.BigEndian.PutUint32(val.Val.Data, uint32(x))
 		val.IsNull = false
 	case uint32:
-		val.Type = *(types.NewLogicType(types.WithLogicTypeId(types.UINTEGER)))
+		val.Type = types.LT_UINTEGER
 		val.Val.Data = make([]byte, 4)
 		binary.BigEndian.PutUint32(val.Val.Data, uint32(x))
 		val.IsNull = false
 	case int64:
 		val.Val.Data = make([]byte, 8)
-		val.Type = *(types.NewLogicType(types.WithLogicTypeId(types.BIGINT)))
+		val.Type = types.LT_BIGINT
 		binary.BigEndian.PutUint64(val.Val.Data, uint64(x))
 		val.IsNull = false
 	case uint64:
 		val.Val.Data = make([]byte, 8)
-		val.Type = *(types.NewLogicType(types.WithLogicTypeId(types.UBIGINT)))
+		val.Type = types.LT_UBIGINT
 		binary.BigEndian.PutUint64(val.Val.Data, uint64(x))
 		val.IsNull = false
-	case int:
+	case int: // TODO: Should not support int
 		val.Val.Data = make([]byte, 8)
-		val.Type = *(types.NewLogicType(types.WithLogicTypeId(types.BIGINT)))
+		val.Type = types.LT_BIGINT
 		binary.BigEndian.PutUint64(val.Val.Data, uint64(x))
 		val.IsNull = false
 	case float32:
 		val.Val.Data = make([]byte, 4)
-		val.Type = *(types.NewLogicType(types.WithLogicTypeId(types.FLOAT32)))
+		val.Type = types.LT_FLOAT32
 		binary.BigEndian.PutUint32(val.Val.Data, math.Float32bits(x))
 		val.IsNull = false
 	case float64:
 		val.Val.Data = make([]byte, 8)
-		val.Type = *(types.NewLogicType(types.WithLogicTypeId(types.FLOAT64)))
+		val.Type = types.LT_FLOAT64
 		binary.BigEndian.PutUint64(val.Val.Data, math.Float64bits(x))
 		val.IsNull = false
 	default:

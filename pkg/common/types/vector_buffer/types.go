@@ -18,5 +18,5 @@ const (
 type VectorBuffer struct {
 	Type     VectorBufferType
 	Data     []byte
-	ItemType types.PhysicalType
+	ItemType types.LogicType
 }

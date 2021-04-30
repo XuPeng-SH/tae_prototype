@@ -33,9 +33,9 @@ func WithType(t VectorBufferType) Option {
 	}
 }
 
-func WithItemType(itype types.PhysicalType) Option {
+func WithItemType(lt types.LogicType) Option {
 	return func(vf VectorBuffer) VectorBuffer {
-		vf.ItemType = itype
+		vf.ItemType = lt
 		return vf
 	}
 }
