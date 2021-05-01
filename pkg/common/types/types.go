@@ -5,7 +5,19 @@ import (
 )
 
 type IDX_T uint64
+type SMIDX_T uint16
 type PhysicalType uint8
+
+const (
+	IDX_0     = IDX_T(0)
+	IDX_1     = IDX_T(1)
+	IDX_2     = IDX_T(2)
+	IDX_MAX   = ^IDX_0
+	SMIDX_0   = SMIDX_T(0)
+	SMIDX_1   = SMIDX_T(1)
+	SMIDX_2   = SMIDX_T(2)
+	SMIDX_MAX = ^SMIDX_0
+)
 
 const (
 	P_NA PhysicalType = iota
