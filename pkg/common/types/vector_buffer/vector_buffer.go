@@ -146,13 +146,16 @@ func (vb *VectorBuffer) MaxItems() int {
 	return len(vb.Data) / (int)(vb.ItemSize)
 }
 
-func (vb *VectorBuffer) ReferenceOther(o interface{}, offset int) {
+func (vb *VectorBuffer) GetItemSize() uint8 {
+	return vb.ItemSize
+}
+
+func (vb *VectorBuffer) ReferenceOther(other IVectorBuffer, offset int) {
 	if offset < 0 || offset >= vb.MaxItems() {
 		panic(fmt.Sprintf("offset %d should be in [%d, %d)", offset, 0, vb.MaxItems()))
 	}
-	other := o.(VectorBuffer)
-	vb.Type = other.Type
-	vb.Data = other.Data[offset*(int)(other.ItemSize):]
-	vb.ItemType = other.ItemType
-	vb.ItemSize = other.ItemSize
+	vb.Type = other.GetType()
+	vb.ItemType = other.GetItemType()
+	vb.ItemSize = other.GetItemSize()
+	vb.Data = other.GetData()[offset*(int)(vb.ItemSize):]
 }

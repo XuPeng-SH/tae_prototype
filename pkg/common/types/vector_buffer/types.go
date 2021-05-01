@@ -36,10 +36,12 @@ func (vt VectorBufferType) String() string {
 type IVectorBuffer interface {
 	Size() int
 	MaxItems() int
-	ReferenceOther(other interface{}, offset int)
+	ReferenceOther(other IVectorBuffer, offset int)
 	SetValue(idx int, val interface{})
 	GetValue(idx int) interface{}
 	GetItemType() types.LogicType
+	GetItemSize() uint8
+	GetData() []byte
 	GetType() VectorBufferType
 }
 
