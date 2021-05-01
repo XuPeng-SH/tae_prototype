@@ -100,3 +100,8 @@ func (vec *Vector) SetValue(idx int, val value.Value) {
 
 	vec.Buff.SetValue(idx, val.GetData())
 }
+
+func (vec *Vector) String() string {
+	ret := "Vec(" + vec.Type.String() + ")," + vec.Buff.String()
+	return ret
+}

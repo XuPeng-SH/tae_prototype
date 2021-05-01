@@ -14,6 +14,7 @@ func TestInitWithLogicType(t *testing.T) {
 	t.Logf("vec itemsize=%d", vec.GetBuffer().GetItemSize())
 	t.Logf("vec itemcount=%d", vec.GetBuffer().MaxItems())
 	t.Logf("vec size=%d", vec.GetBuffer().Size())
+	t.Log(vec)
 	assert.Equal(t, vec.GetBuffer().GetItemSize(), types.PSIZE_FLOAT32)
 	assert.Equal(t, vec.GetBuffer().MaxItems(), constants.STANDARD_VECTOR_SIZE)
 	assert.Equal(t, vec.GetBuffer().Size(), (int)(types.PSIZE_FLOAT32)*constants.STANDARD_VECTOR_SIZE)

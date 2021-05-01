@@ -3,9 +3,11 @@ package vector_buffer
 import (
 	"encoding/binary"
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	"math"
+	"strconv"
 	"tae/pkg/common/types"
+
+	log "github.com/sirupsen/logrus"
 )
 
 var (
@@ -153,6 +155,36 @@ func (vb *VectorBuffer) MaxItems() int {
 
 func (vb *VectorBuffer) GetItemSize() uint8 {
 	return vb.ItemSize
+}
+
+func (vb *VectorBuffer) String() string {
+	count := vb.MaxItems()
+	if count >= 32 {
+		count = 32
+	}
+	return vb.ToString(count)
+}
+
+func (vb *VectorBuffer) ToString(opts ...interface{}) string {
+	count := vb.MaxItems()
+	if len(opts) > 0 {
+		cnt := opts[0].(int)
+		if cnt <= 0 {
+			count = 0
+		} else if cnt < count {
+			count = cnt
+		}
+	}
+	ret := "Vbuff(" + vb.Type.String() + "," + vb.ItemType.String() + "): [" + strconv.Itoa(count)
+	ret += "/" + strconv.Itoa(vb.MaxItems()) + "] = ["
+	for i := 0; i < count; i++ {
+		ret += fmt.Sprintf("%v", vb.GetValue(i))
+		if i != count-1 {
+			ret += ","
+		}
+	}
+	ret += "]"
+	return ret
 }
 
 func (vb *VectorBuffer) ReferenceOther(other IVectorBuffer, offset int) {
