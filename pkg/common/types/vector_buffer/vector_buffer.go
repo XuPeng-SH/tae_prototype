@@ -107,6 +107,11 @@ func (vf *VectorBuffer) SetValue(idx int, val interface{}) {
 	if idx < 0 || (idx+1)*(int)(vf.ItemSize) > len(vf.Data) {
 		panic(fmt.Sprintf("Invalid idx: %d, should be in range [0, %d)", idx, len(vf.Data)/(int)(vf.ItemSize)))
 	}
+	switch bytes := val.(type) {
+	case []byte:
+		copy(vf.Data[idx:], bytes)
+		return
+	}
 	switch vf.ItemType.GetID() {
 	case types.BOOLEAN:
 		v := val.(bool)

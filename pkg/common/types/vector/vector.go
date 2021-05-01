@@ -2,6 +2,7 @@ package vector
 
 import (
 	"tae/pkg/common/types"
+	"tae/pkg/common/types/constants"
 	"tae/pkg/common/types/value"
 	// vmask "tae/pkg/common/types/validity_mask"
 	// "fmt"
@@ -21,6 +22,15 @@ func NewVector(options ...Option) *Vector {
 }
 
 type Option func(Vector) Vector
+
+func WithInitByLogicType(lt types.LogicType) Option {
+	return func(vec Vector) Vector {
+		vec.Type = FLAT_VECTOR
+		vec.Buff = vbuff.NewVectorBuffer(vbuff.WithItemType(lt),
+			vbuff.WithSize((int)(lt.GetPhysicalType().Size())*constants.STANDARD_VECTOR_SIZE))
+		return vec
+	}
+}
 
 func WithInitByValue(val value.Value) Option {
 	return func(vec Vector) Vector {
@@ -67,6 +77,14 @@ func (vec *Vector) SliceWithSel(sel svec.SelectionVector, count int) {
 	vec.Buff = vbuff.NewDictonaryBuffer(vbuff.WithDictBuffItemType(vec.Buff.GetItemType()),
 		vbuff.WithDictBuffSelectionVector(sel))
 	vec.Type = DICTIONARY_VECTOR
+}
+
+func (vec *Vector) GetBuffer() vbuff.IVectorBuffer {
+	return vec.Buff
+}
+
+func (vec *Vector) GetType() VectorType {
+	return vec.Type
 }
 
 func (vec *Vector) GetLogicType() types.LogicType {
