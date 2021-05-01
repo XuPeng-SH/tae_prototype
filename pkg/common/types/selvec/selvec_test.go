@@ -2,11 +2,12 @@ package selvec
 
 import (
 	"github.com/stretchr/testify/assert"
+	"tae/pkg/common/types"
 	"testing"
 )
 
 func TestAll(t *testing.T) {
-	count := 16
+	count := types.IDX_T(16)
 	op := WithCount(count)
 	sv := New(op)
 	t.Log(sv.String(count))
@@ -29,7 +30,7 @@ func TestAll(t *testing.T) {
 	sv2 := New()
 	assert.True(t, sv2.Empty())
 	sv2.InitWithCount(4)
-	assert.Equal(t, sv2.Count(), 4)
+	assert.Equal(t, sv2.Count(), types.IDX_T(4))
 
 	sv2.SetIndex(0, 0)
 	sv2.SetIndex(1, 2)

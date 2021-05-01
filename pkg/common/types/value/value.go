@@ -137,7 +137,7 @@ func (val *Value) GetLogicType() types.LogicType {
 	return val.Type
 }
 
-func (val *Value) GetPhysicalTypeSize() uint8 {
+func (val *Value) GetPhysicalTypeSize() types.IDX_T {
 	return val.Type.GetPhysicalType().Size()
 }
 

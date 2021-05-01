@@ -35,13 +35,13 @@ func (vt VectorBufferType) String() string {
 
 type IVectorBuffer interface {
 	String() string
-	Size() int
-	MaxItems() int
-	ReferenceOther(other IVectorBuffer, offset int)
-	SetValue(idx int, val interface{})
-	GetValue(idx int) interface{}
+	Size() types.IDX_T
+	MaxItems() types.IDX_T
+	ReferenceOther(other IVectorBuffer, offset types.IDX_T)
+	SetValue(idx types.IDX_T, val interface{})
+	GetValue(idx types.IDX_T) interface{}
 	GetItemType() types.LogicType
-	GetItemSize() uint8
+	GetItemSize() types.IDX_T
 	GetData() []byte
 	GetType() VectorBufferType
 }
@@ -51,5 +51,5 @@ type VectorBuffer struct {
 	Type     VectorBufferType
 	Data     []byte
 	ItemType types.LogicType
-	ItemSize uint8
+	ItemSize types.IDX_T
 }

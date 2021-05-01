@@ -1,12 +1,11 @@
 package vector
 
 import (
+	"fmt"
 	"tae/pkg/common/types"
 	"tae/pkg/common/types/constants"
-	"tae/pkg/common/types/value"
-	// vmask "tae/pkg/common/types/validity_mask"
-	"fmt"
 	"tae/pkg/common/types/selvec"
+	"tae/pkg/common/types/value"
 	"tae/pkg/common/types/vbuff"
 )
 
@@ -27,7 +26,7 @@ func WithInitByLogicType(lt types.LogicType) Option {
 	return func(vec Vector) Vector {
 		vec.Type = FLAT_VECTOR
 		vec.Buff = vbuff.NewVectorBuffer(vbuff.WithItemType(lt),
-			vbuff.WithSize((int)(lt.GetPhysicalType().Size())*constants.STANDARD_VECTOR_SIZE))
+			vbuff.WithSize((types.IDX_T)(lt.GetPhysicalType().Size())*constants.STANDARD_VECTOR_SIZE))
 		return vec
 	}
 }
@@ -37,13 +36,13 @@ func WithInitByValue(val value.Value) Option {
 		vec.Type = CONSTANT_VECTOR
 		lt := val.GetLogicType()
 		vec.Buff = vbuff.NewVectorBuffer(vbuff.WithItemType(lt),
-			vbuff.WithSize((int)(lt.GetPhysicalType().Size())))
+			vbuff.WithSize((types.IDX_T)(lt.GetPhysicalType().Size())))
 		vec.SetValue(0, val)
 		return vec
 	}
 }
 
-func (vec *Vector) ReferenceOther(other Vector, offset int) {
+func (vec *Vector) ReferenceOther(other Vector, offset types.IDX_T) {
 	vec.Type = other.Type
 	if offset == 0 {
 		vec.Buff = other.Buff
@@ -55,7 +54,7 @@ func (vec *Vector) ReferenceOther(other Vector, offset int) {
 	vec.Validity.Slice(*other.Validity, offset)
 }
 
-func (vec *Vector) SliceOther(other Vector, offset int) {
+func (vec *Vector) SliceOther(other Vector, offset types.IDX_T) {
 	if other.Type == CONSTANT_VECTOR {
 		vec.ReferenceOther(other, 0)
 	}
@@ -65,12 +64,12 @@ func (vec *Vector) SliceOther(other Vector, offset int) {
 	vec.ReferenceOther(other, offset)
 }
 
-func (vec *Vector) SliceOtherWithSel(other Vector, sel selvec.SelectionVector, count int) {
+func (vec *Vector) SliceOtherWithSel(other Vector, sel selvec.SelectionVector, count types.IDX_T) {
 	vec.ReferenceOther(other, 0)
 	vec.SliceWithSel(sel, count)
 }
 
-func (vec *Vector) SliceWithSel(sel selvec.SelectionVector, count int) {
+func (vec *Vector) SliceWithSel(sel selvec.SelectionVector, count types.IDX_T) {
 	if vec.Type == CONSTANT_VECTOR {
 		return
 	}
@@ -91,7 +90,7 @@ func (vec *Vector) GetLogicType() types.LogicType {
 	return vec.Buff.GetItemType()
 }
 
-func (vec *Vector) SetValue(idx int, val value.Value) {
+func (vec *Vector) SetValue(idx types.IDX_T, val value.Value) {
 	lt := vec.GetLogicType()
 	if lt != val.GetLogicType() {
 		// PXU TODO: Try Cast
@@ -101,7 +100,7 @@ func (vec *Vector) SetValue(idx int, val value.Value) {
 	vec.Buff.SetValue(idx, val.GetData())
 }
 
-func (vec *Vector) GetValue(idx int) interface{} {
+func (vec *Vector) GetValue(idx types.IDX_T) interface{} {
 	switch vec.Type {
 	case CONSTANT_VECTOR:
 		idx = 0
@@ -123,7 +122,7 @@ func (vec *Vector) IsNull(opt ...interface{}) bool {
 	case CONSTANT_VECTOR:
 		return !vec.Validity.IsRowValid(0)
 	case FLAT_VECTOR:
-		idx := opt[0].(int)
+		idx := opt[0].(types.IDX_T)
 		return !vec.Validity.IsRowValid(idx)
 	}
 	panic(fmt.Sprintf("Should not call IsNull for vector type: %v", vec.Type))
@@ -138,7 +137,7 @@ func (vec *Vector) SetNull(is_null bool, opt ...interface{}) {
 			vec.Validity.SetValid(0)
 		}
 	case FLAT_VECTOR:
-		idx := opt[0].(int)
+		idx := opt[0].(types.IDX_T)
 		if is_null {
 			vec.Validity.SetInvalid(idx)
 		} else {

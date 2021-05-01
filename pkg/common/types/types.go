@@ -1,6 +1,7 @@
 package types
 
 import (
+	"fmt"
 	"unsafe"
 )
 
@@ -18,6 +19,10 @@ const (
 	SMIDX_2   = SMIDX_T(2)
 	SMIDX_MAX = ^SMIDX_0
 )
+
+func (idx IDX_T) String() string {
+	return fmt.Sprintf("%d", idx)
+}
 
 const (
 	P_NA PhysicalType = iota
@@ -37,20 +42,20 @@ const (
 )
 
 const (
-	PSIZE_NA      = uint8(0)
-	PSIZE_BOOL    = (uint8)(unsafe.Sizeof(false))
-	PSIZE_UINT8   = (uint8)(unsafe.Sizeof(uint8(0)))
-	PSIZE_INT8    = (uint8)(unsafe.Sizeof(int8(0)))
-	PSIZE_UINT16  = (uint8)(unsafe.Sizeof(uint16(0)))
-	PSIZE_INT16   = (uint8)(unsafe.Sizeof(int16(0)))
-	PSIZE_UINT32  = (uint8)(unsafe.Sizeof(uint32(0)))
-	PSIZE_INT32   = (uint8)(unsafe.Sizeof(int32(0)))
-	PSIZE_UINT64  = (uint8)(unsafe.Sizeof(uint64(0)))
-	PSIZE_INT64   = (uint8)(unsafe.Sizeof(int64(0)))
-	PSIZE_INT     = (uint8)(unsafe.Sizeof(int(0)))
-	PSIZE_FLOAT32 = (uint8)(unsafe.Sizeof(float32(0)))
-	PSIZE_FLOAT64 = (uint8)(unsafe.Sizeof(float64(0)))
-	PSIZE_INVALID = uint8(0)
+	PSIZE_NA      = IDX_T(0)
+	PSIZE_BOOL    = (IDX_T)(unsafe.Sizeof(false))
+	PSIZE_UINT8   = (IDX_T)(unsafe.Sizeof(uint8(0)))
+	PSIZE_INT8    = (IDX_T)(unsafe.Sizeof(int8(0)))
+	PSIZE_UINT16  = (IDX_T)(unsafe.Sizeof(uint16(0)))
+	PSIZE_INT16   = (IDX_T)(unsafe.Sizeof(int16(0)))
+	PSIZE_UINT32  = (IDX_T)(unsafe.Sizeof(uint32(0)))
+	PSIZE_INT32   = (IDX_T)(unsafe.Sizeof(int32(0)))
+	PSIZE_UINT64  = (IDX_T)(unsafe.Sizeof(uint64(0)))
+	PSIZE_INT64   = (IDX_T)(unsafe.Sizeof(int64(0)))
+	PSIZE_INT     = (IDX_T)(unsafe.Sizeof(int(0)))
+	PSIZE_FLOAT32 = (IDX_T)(unsafe.Sizeof(float32(0)))
+	PSIZE_FLOAT64 = (IDX_T)(unsafe.Sizeof(float64(0)))
+	PSIZE_INVALID = IDX_T(0)
 )
 
 type LogicalTypeId uint8

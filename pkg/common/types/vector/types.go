@@ -2,8 +2,8 @@ package vector
 
 import (
 	"fmt"
-	vmask "tae/pkg/common/types/validity_mask"
-	vbuff "tae/pkg/common/types/vbuff"
+	"tae/pkg/common/types/vbuff"
+	"tae/pkg/common/types/vmask"
 )
 
 type VectorType uint8

@@ -1,7 +1,9 @@
 package selvec
 
 import (
+	"fmt"
 	"strconv"
+	"tae/pkg/common/types"
 )
 
 func New(options ...Option) *SelectionVector {
@@ -16,14 +18,14 @@ func New(options ...Option) *SelectionVector {
 
 type Option func(SelectionVector) SelectionVector
 
-func WithCount(count int) Option {
+func WithCount(count types.IDX_T) Option {
 	return func(sv SelectionVector) SelectionVector {
 		sv.InitWithCount(count)
 		return sv
 	}
 }
 
-func (sv *SelectionVector) InitWithCount(count int) {
+func (sv *SelectionVector) InitWithCount(count types.IDX_T) {
 	data := &SelectionData{}
 	data.Data = make([]EntryT, count)
 	sv.Data = data
@@ -41,54 +43,54 @@ func (sv *SelectionVector) Empty() bool {
 	return (sv.Data == nil) || (len(sv.Data.Data) == 0)
 }
 
-func (sv *SelectionVector) SetIndex(index int, loc EntryT) {
+func (sv *SelectionVector) SetIndex(index types.IDX_T, loc EntryT) {
 	sv.Data.Data[index] = loc
 }
 
-func (sv *SelectionVector) GetIndex(index int) EntryT {
+func (sv *SelectionVector) GetIndex(index types.IDX_T) EntryT {
 	return sv.Data.Data[index]
 }
 
-func (sv *SelectionVector) Count() int {
+func (sv *SelectionVector) Count() types.IDX_T {
 	if sv.Data == nil {
 		return 0
 	}
-	return len(sv.Data.Data)
+	return types.IDX_T(len(sv.Data.Data))
 }
 
-func (sv *SelectionVector) Slice(other SelectionVector, count int) *SelectionData {
+func (sv *SelectionVector) Slice(other SelectionVector, count types.IDX_T) *SelectionData {
 	if count > other.Count() {
 		return nil
 	}
 	data := SelectionData{
 		Data: make([]EntryT, count),
 	}
-	for i := 0; i < count; i++ {
+	for i := types.IDX_0; i < count; i++ {
 		new_idx := other.GetIndex(i)
-		if (int)(new_idx) > sv.Count() {
+		if (types.IDX_T)(new_idx) > sv.Count() {
 			return nil
 		}
-		idx := sv.GetIndex((int)(new_idx))
+		idx := sv.GetIndex((types.IDX_T)(new_idx))
 		data.Data[i] = idx
 	}
 	return &data
 }
 
-func (sv *SelectionVector) Swap(i int, j int) {
+func (sv *SelectionVector) Swap(i, j types.IDX_T) {
 	if i == j {
 		return
 	}
 	tmp := sv.GetIndex(i)
-	sv.SetIndex(i, sv.GetIndex(j))
-	sv.SetIndex(j, tmp)
+	sv.SetIndex((types.IDX_T)(i), sv.GetIndex(j))
+	sv.SetIndex((types.IDX_T)(j), tmp)
 }
 
-func (sv *SelectionVector) String(count int) string {
-	ret := "SelectionVector [" + strconv.Itoa(count) + "/" + strconv.Itoa(sv.Count()) + "] ("
+func (sv *SelectionVector) String(count types.IDX_T) string {
+	ret := fmt.Sprintf("SelectionVector [%v/%v]", count, sv.Count())
 	if count > sv.Count() {
 		count = sv.Count()
 	}
-	for i := 0; i < count; i++ {
+	for i := types.IDX_0; i < count; i++ {
 		if i != 0 {
 			ret += ", "
 		}

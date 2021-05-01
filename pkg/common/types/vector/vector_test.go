@@ -17,7 +17,7 @@ func TestInitWithLogicType(t *testing.T) {
 	t.Log(vec)
 	assert.Equal(t, vec.GetBuffer().GetItemSize(), types.PSIZE_FLOAT32)
 	assert.Equal(t, vec.GetBuffer().MaxItems(), constants.STANDARD_VECTOR_SIZE)
-	assert.Equal(t, vec.GetBuffer().Size(), (int)(types.PSIZE_FLOAT32)*constants.STANDARD_VECTOR_SIZE)
+	assert.Equal(t, vec.GetBuffer().Size(), types.PSIZE_FLOAT32*constants.STANDARD_VECTOR_SIZE)
 	assert.Equal(t, vec.GetBuffer().GetType(), vbuff.STANDARD_BUFFER)
 	assert.Equal(t, vec.GetType(), FLAT_VECTOR)
 }
@@ -31,8 +31,8 @@ func TestInitWithValue(t *testing.T) {
 	t.Logf("vec size=%d", vec.GetBuffer().Size())
 	t.Log(vec)
 	assert.Equal(t, vec.GetBuffer().GetItemSize(), types.PSIZE_FLOAT32)
-	assert.Equal(t, vec.GetBuffer().MaxItems(), 1)
-	assert.Equal(t, vec.GetBuffer().Size(), (int)(types.PSIZE_FLOAT32))
+	assert.Equal(t, vec.GetBuffer().MaxItems(), types.IDX_1)
+	assert.Equal(t, vec.GetBuffer().Size(), types.PSIZE_FLOAT32)
 	assert.Equal(t, vec.GetBuffer().GetType(), vbuff.STANDARD_BUFFER)
 	assert.Equal(t, vec.GetType(), CONSTANT_VECTOR)
 }

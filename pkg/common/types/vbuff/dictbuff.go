@@ -26,7 +26,7 @@ func NewDictonaryBuffer(options ...DictBuffOption) *DictionaryBuffer {
 
 type DictBuffOption func(DictionaryBuffer) DictionaryBuffer
 
-func WithDictBuffCount(count int) DictBuffOption {
+func WithDictBuffCount(count types.IDX_T) DictBuffOption {
 	return func(db DictionaryBuffer) DictionaryBuffer {
 		db.SelVec = selvec.New(selvec.WithCount(count))
 		return db

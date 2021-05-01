@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-func (pt PhysicalType) Size() uint8 {
+func (pt PhysicalType) Size() IDX_T {
 	switch pt {
 	case P_INVALID:
 		return PSIZE_INVALID

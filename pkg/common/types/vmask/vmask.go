@@ -1,8 +1,7 @@
-package validity_mask
+package vmask
 
 import (
 	"fmt"
-	"strconv"
 	// log "github.com/sirupsen/logrus"
 	"tae/pkg/common/types"
 	"tae/pkg/common/types/constants"
@@ -11,14 +10,14 @@ import (
 func WhichEntry(idx types.IDX_T) types.IDX_T {
 	return (idx + ((types.IDX_T)(BITS_PER_ENTRY) - 1)) / (types.IDX_T)(BITS_PER_ENTRY)
 }
-func GetEntryIndex(row_idx int) EntryIndex {
+func GetEntryIndex(row_idx types.IDX_T) EntryIndex {
 	ei := EntryIndex{}
 	ei.Idx = row_idx / BITS_PER_ENTRY
 	ei.Offset = row_idx % BITS_PER_ENTRY
 	return ei
 }
 
-func (e *EntryT) IsValid(idx int) bool {
+func (e *EntryT) IsValid(idx types.IDX_T) bool {
 	if idx < 0 || idx >= BITS_PER_ENTRY {
 		panic(fmt.Sprintf("Invalid idx %d", idx))
 	}
@@ -41,7 +40,8 @@ func (e *EntryT) String() string {
 	} else if *e == MAX_ENTRY {
 		ret += "++"
 	} else {
-		for i := BITS_PER_ENTRY - 1; i >= 0; i-- {
+		for i := BITS_PER_ENTRY; i >= 1; i-- {
+			// log.Info(i)
 			if *e&(EntryT(1)<<i) > 0 {
 				ret += "."
 			} else {
@@ -55,7 +55,7 @@ func (e *EntryT) String() string {
 
 type Option func(ValidityMask) ValidityMask
 
-func New(count int, options ...Option) *ValidityMask {
+func New(count types.IDX_T, options ...Option) *ValidityMask {
 	vm := &ValidityMask{}
 	vm.Init(count)
 	for _, option := range options {
@@ -74,10 +74,7 @@ func (vm *ValidityMask) InitAllValid() {
 	}
 }
 
-func (vm *ValidityMask) Init(count int) {
-	if count < 0 {
-		panic("Count should not be negtive value")
-	}
+func (vm *ValidityMask) Init(count types.IDX_T) {
 	if count > constants.STANDARD_VECTOR_SIZE {
 		panic(fmt.Sprintf("Too big count, should not be larger than %d", constants.STANDARD_VECTOR_SIZE))
 	}
@@ -89,15 +86,15 @@ func (vm *ValidityMask) Init(count int) {
 	vm.Data = make([]EntryT, 0, entry_count)
 }
 
-func (vm *ValidityMask) Len() int {
-	return len(vm.Data)
+func (vm *ValidityMask) Len() types.IDX_T {
+	return (types.IDX_T)(len(vm.Data))
 }
 
 func (vm *ValidityMask) Reset() {
 	vm.Data = vm.Data[:0]
 }
 
-func (vm *ValidityMask) GetEntry(entry_idx int) EntryT {
+func (vm *ValidityMask) GetEntry(entry_idx types.IDX_T) EntryT {
 	if entry_idx >= vm.Len() {
 		return MAX_ENTRY
 	}
@@ -105,7 +102,7 @@ func (vm *ValidityMask) GetEntry(entry_idx int) EntryT {
 	return vm.Data[entry_idx]
 }
 
-func (vm *ValidityMask) SetInvalid(row_idx int) {
+func (vm *ValidityMask) SetInvalid(row_idx types.IDX_T) {
 	ei := GetEntryIndex(row_idx)
 	if ei.Idx >= vm.Len() {
 		return
@@ -113,8 +110,8 @@ func (vm *ValidityMask) SetInvalid(row_idx int) {
 	vm.Data[ei.Idx] &= ^(EntryT(1) << ei.Offset)
 }
 
-func (vm *ValidityMask) ValidateRows(rows int) {
-	if rows >= constants.STANDARD_VECTOR_SIZE || rows < 0 {
+func (vm *ValidityMask) ValidateRows(rows types.IDX_T) {
+	if rows >= constants.STANDARD_VECTOR_SIZE {
 		panic(fmt.Sprintf("Rows should be not more than %d", constants.STANDARD_VECTOR_SIZE))
 	}
 	if rows == 0 || vm.Len() == 0 {
@@ -122,12 +119,12 @@ func (vm *ValidityMask) ValidateRows(rows int) {
 	}
 
 	ei := GetEntryIndex(rows)
-	for i := 0; i <= ei.Idx; i++ {
+	for i := types.IDX_0; i <= ei.Idx; i++ {
 		vm.Data[i] = MAX_ENTRY
 	}
 }
 
-func (vm *ValidityMask) InvalidateRows(rows int) {
+func (vm *ValidityMask) InvalidateRows(rows types.IDX_T) {
 	if rows >= constants.STANDARD_VECTOR_SIZE || rows < 0 {
 		panic(fmt.Sprintf("Rows should be not more than %d", constants.STANDARD_VECTOR_SIZE))
 	}
@@ -140,12 +137,12 @@ func (vm *ValidityMask) InvalidateRows(rows int) {
 
 	ei := GetEntryIndex(rows)
 	// log.Info(ei.String())
-	for i := 0; i <= ei.Idx; i++ {
+	for i := types.IDX_0; i <= ei.Idx; i++ {
 		vm.Data[i] = 0
 	}
 }
 
-func (vm *ValidityMask) SetValid(row_idx int) {
+func (vm *ValidityMask) SetValid(row_idx types.IDX_T) {
 	if vm.Len() == 0 {
 		return
 	}
@@ -156,7 +153,7 @@ func (vm *ValidityMask) SetValid(row_idx int) {
 	vm.Data[ei.Idx] |= EntryT(1) << ei.Offset
 }
 
-func (vm *ValidityMask) IsRowValid(row_idx int) bool {
+func (vm *ValidityMask) IsRowValid(row_idx types.IDX_T) bool {
 	if vm.Len() == 0 {
 		return true
 	}
@@ -181,10 +178,7 @@ func (vm *ValidityMask) AllValid() bool {
 	return true
 }
 
-func (vm *ValidityMask) Slice(other ValidityMask, offset int) {
-	if offset < 0 {
-		panic("")
-	}
+func (vm *ValidityMask) Slice(other ValidityMask, offset types.IDX_T) {
 	if other.AllValid() {
 		vm.Reset()
 		return
@@ -199,12 +193,12 @@ func (vm *ValidityMask) Slice(other ValidityMask, offset int) {
 	all_units := offset / BITS_PER_ENTRY
 
 	if all_units != 0 {
-		for idx := 0; idx+all_units < STANDARD_ENTRY_COUNT; idx++ {
+		for idx := types.IDX_0; idx+all_units < STANDARD_ENTRY_COUNT; idx++ {
 			vm.Data[idx] = other.Data[idx+all_units]
 		}
 	}
 	if sub_units := offset - all_units%BITS_PER_ENTRY; sub_units > 0 {
-		idx := 0
+		idx := types.IDX_0
 		for ; idx+1 < STANDARD_ENTRY_COUNT; idx++ {
 			vm.Data[idx] = (other.Data[idx] >> sub_units) | (other.Data[idx+1] << (BITS_PER_ENTRY - sub_units))
 		}
@@ -212,7 +206,7 @@ func (vm *ValidityMask) Slice(other ValidityMask, offset int) {
 	}
 }
 
-func (vm *ValidityMask) Combine(other ValidityMask, count int) {
+func (vm *ValidityMask) Combine(other ValidityMask, count types.IDX_T) {
 	if other.AllValid() {
 		return
 	}
@@ -225,14 +219,14 @@ func (vm *ValidityMask) Combine(other ValidityMask, count int) {
 	vm.InitAllValid()
 
 	ei := GetEntryIndex(count)
-	for i := 0; i <= ei.Idx; i++ {
+	for i := types.IDX_0; i <= ei.Idx; i++ {
 		vm.Data[i] = old_data[i] & other.Data[i]
 	}
 }
 
-func (vm *ValidityMask) String(count int) string {
-	ret := "ValidityMask (" + strconv.Itoa(count) + ")["
-	for i := 0; i < count; i++ {
+func (vm *ValidityMask) String(count types.IDX_T) string {
+	ret := fmt.Sprintf("ValidityMask (%v)[", count)
+	for i := types.IDX_0; i < count; i++ {
 		if vm.IsRowValid(i) {
 			ret += "."
 		} else {
