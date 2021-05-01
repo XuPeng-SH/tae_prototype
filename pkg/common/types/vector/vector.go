@@ -6,8 +6,8 @@ import (
 	"tae/pkg/common/types/value"
 	// vmask "tae/pkg/common/types/validity_mask"
 	"fmt"
-	svec "tae/pkg/common/types/selection_vector"
-	vbuff "tae/pkg/common/types/vector_buffer"
+	"tae/pkg/common/types/selvec"
+	"tae/pkg/common/types/vbuff"
 )
 
 func NewVector(options ...Option) *Vector {
@@ -65,12 +65,12 @@ func (vec *Vector) SliceOther(other Vector, offset int) {
 	vec.ReferenceOther(other, offset)
 }
 
-func (vec *Vector) SliceOtherWithSel(other Vector, sel svec.SelectionVector, count int) {
+func (vec *Vector) SliceOtherWithSel(other Vector, sel selvec.SelectionVector, count int) {
 	vec.ReferenceOther(other, 0)
 	vec.SliceWithSel(sel, count)
 }
 
-func (vec *Vector) SliceWithSel(sel svec.SelectionVector, count int) {
+func (vec *Vector) SliceWithSel(sel selvec.SelectionVector, count int) {
 	if vec.Type == CONSTANT_VECTOR {
 		return
 	}

@@ -5,7 +5,7 @@ import (
 	"tae/pkg/common/types"
 	"tae/pkg/common/types/constants"
 	"tae/pkg/common/types/value"
-	vbuff "tae/pkg/common/types/vector_buffer"
+	vbuff "tae/pkg/common/types/vbuff"
 	"testing"
 )
 

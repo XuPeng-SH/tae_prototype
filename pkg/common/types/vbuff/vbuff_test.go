@@ -1,4 +1,4 @@
-package vector_buffer
+package vbuff
 
 import (
 	"github.com/stretchr/testify/assert"

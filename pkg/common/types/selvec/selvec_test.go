@@ -1,4 +1,4 @@
-package selection_vector
+package selvec
 
 import (
 	"github.com/stretchr/testify/assert"

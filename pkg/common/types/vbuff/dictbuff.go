@@ -1,13 +1,13 @@
-package vector_buffer
+package vbuff
 
 import (
 	"tae/pkg/common/types"
-	SV "tae/pkg/common/types/selection_vector"
+	"tae/pkg/common/types/selvec"
 )
 
 type DictionaryBuffer struct {
 	VectorBuffer
-	SelVec *SV.SelectionVector
+	SelVec *selvec.SelectionVector
 }
 
 var (
@@ -28,14 +28,14 @@ type DictBuffOption func(DictionaryBuffer) DictionaryBuffer
 
 func WithDictBuffCount(count int) DictBuffOption {
 	return func(db DictionaryBuffer) DictionaryBuffer {
-		db.SelVec = SV.New(SV.WithCount(count))
+		db.SelVec = selvec.New(selvec.WithCount(count))
 		return db
 	}
 }
 
-func WithDictBuffSelectionVector(sv SV.SelectionVector) DictBuffOption {
+func WithDictBuffSelectionVector(sv selvec.SelectionVector) DictBuffOption {
 	return func(db DictionaryBuffer) DictionaryBuffer {
-		db.SelVec = SV.New()
+		db.SelVec = selvec.New()
 		db.SelVec.InitWithOther(sv)
 		return db
 	}

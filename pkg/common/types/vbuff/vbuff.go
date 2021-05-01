@@ -1,4 +1,4 @@
-package vector_buffer
+package vbuff
 
 import (
 	"encoding/binary"
