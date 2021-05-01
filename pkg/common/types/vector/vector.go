@@ -5,7 +5,7 @@ import (
 	"tae/pkg/common/types/constants"
 	"tae/pkg/common/types/value"
 	// vmask "tae/pkg/common/types/validity_mask"
-	// "fmt"
+	"fmt"
 	svec "tae/pkg/common/types/selection_vector"
 	vbuff "tae/pkg/common/types/vector_buffer"
 )
@@ -101,7 +101,49 @@ func (vec *Vector) SetValue(idx int, val value.Value) {
 	vec.Buff.SetValue(idx, val.GetData())
 }
 
+func (vec *Vector) GetValue(idx int) interface{} {
+	switch vec.Type {
+	case CONSTANT_VECTOR:
+		idx = 0
+	}
+	if !vec.Validity.IsRowValid(idx) {
+		// TODO: Init all these value as const value
+		return *(value.NewValue(vec.GetLogicType()))
+	}
+	return vec.Buff.GetValue(idx)
+}
+
 func (vec *Vector) String() string {
 	ret := "Vec(" + vec.Type.String() + ")," + vec.Buff.String()
 	return ret
+}
+
+func (vec *Vector) IsNull(opt ...interface{}) bool {
+	switch vec.Type {
+	case CONSTANT_VECTOR:
+		return !vec.Validity.IsRowValid(0)
+	case FLAT_VECTOR:
+		idx := opt[0].(int)
+		return !vec.Validity.IsRowValid(idx)
+	}
+	panic(fmt.Sprintf("Should not call IsNull for vector type: %v", vec.Type))
+}
+
+func (vec *Vector) SetNull(is_null bool, opt ...interface{}) {
+	switch vec.Type {
+	case CONSTANT_VECTOR:
+		if is_null {
+			vec.Validity.SetInvalid(0)
+		} else {
+			vec.Validity.SetValid(0)
+		}
+	case FLAT_VECTOR:
+		idx := opt[0].(int)
+		if is_null {
+			vec.Validity.SetInvalid(idx)
+		} else {
+			vec.Validity.SetValid(idx)
+		}
+	}
+	panic(fmt.Sprintf("Should not call SetNull for vector type: %v", vec.Type))
 }
