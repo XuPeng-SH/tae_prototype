@@ -36,7 +36,7 @@ func (pt PhysicalType) Size() uint8 {
 	panic(fmt.Sprintf("UNKNOWN physical type: %v", pt))
 }
 
-func (pt PhysicalType) ToString() string {
+func (pt PhysicalType) String() string {
 	switch pt {
 	case P_INVALID:
 		return "INVALID"
@@ -65,7 +65,7 @@ func (pt PhysicalType) ToString() string {
 	case P_FLOAT64:
 		return "FLOAT64"
 	}
-	panic(fmt.Sprintf("UNKNOWN physical type: %v", pt))
+	panic(fmt.Sprintf("UNKNOWN physical type: %d", pt))
 }
 
 func (pt PhysicalType) IsConstantSize() bool {

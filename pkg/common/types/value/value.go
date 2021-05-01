@@ -158,9 +158,9 @@ func (val *Value) Cast(lt types.LogicType, strict bool) *Value {
 	return nil
 }
 
-func (val *Value) ToString() string {
+func (val *Value) String() string {
 	if val.IsNull {
-		return fmt.Sprintf("Val[%s](NULL)", val.Type.ToString())
+		return fmt.Sprintf("Val[%s](NULL)", val.Type.String())
 	}
-	return fmt.Sprintf("Val[%s](%v)", val.Type.ToString(), val.GetValue())
+	return fmt.Sprintf("Val[%s](%v)", val.Type.String(), val.GetValue())
 }

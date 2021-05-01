@@ -15,7 +15,7 @@ const (
 	LIST_BUFFER
 )
 
-func (vt VectorBufferType) ToString() string {
+func (vt VectorBufferType) String() string {
 	switch vt {
 	case STANDARD_BUFFER:
 		return "STANDARD_BUFFER"

@@ -34,7 +34,7 @@ func (e *EntryT) NoneValid() bool {
 	return *e == 0
 }
 
-func (e *EntryT) ToString() string {
+func (e *EntryT) String() string {
 	ret := "Entry ("
 	if *e == 0 {
 		ret += "--"
@@ -139,7 +139,7 @@ func (vm *ValidityMask) InvalidateRows(rows int) {
 	}
 
 	ei := GetEntryIndex(rows)
-	// log.Info(ei.ToString())
+	// log.Info(ei.String())
 	for i := 0; i <= ei.Idx; i++ {
 		vm.Data[i] = 0
 	}
@@ -230,7 +230,7 @@ func (vm *ValidityMask) Combine(other ValidityMask, count int) {
 	}
 }
 
-func (vm *ValidityMask) ToString(count int) string {
+func (vm *ValidityMask) String(count int) string {
 	ret := "ValidityMask (" + strconv.Itoa(count) + ")["
 	for i := 0; i < count; i++ {
 		if vm.IsRowValid(i) {
@@ -244,7 +244,7 @@ func (vm *ValidityMask) ToString(count int) string {
 	return ret
 }
 
-func (ei *EntryIndex) ToString() string {
+func (ei *EntryIndex) String() string {
 	return fmt.Sprintf("EntryIndex<%d, %d>", ei.Idx, ei.Offset)
 }
 

@@ -46,5 +46,5 @@ func TestDictBuff(t *testing.T) {
 	dbuff := NewDictonaryBuffer(WithDictBuffCount(20), WithDictBuffItemType(types.LT_FLOAT32))
 	assert.Equal(t, dbuff.GetType(), DICTIONARY_BUFFER)
 	assert.Equal(t, dbuff.GetItemType(), types.LT_FLOAT32)
-	t.Log(dbuff.SelVec.ToString(10))
+	t.Log(dbuff.SelVec.String(10))
 }

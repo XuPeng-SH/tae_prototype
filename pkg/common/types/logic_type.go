@@ -90,11 +90,11 @@ func (lt *LogicType) GetID() LogicalTypeId {
 	return lt.LType
 }
 
-func (lt *LogicType) ToString() string {
-	return lt.LType.ToString()
+func (lt *LogicType) String() string {
+	return lt.LType.String()
 }
 
-func (lti LogicalTypeId) ToString() string {
+func (lti LogicalTypeId) String() string {
 	switch lti {
 	case BOOLEAN:
 		return "BOOLEAN"

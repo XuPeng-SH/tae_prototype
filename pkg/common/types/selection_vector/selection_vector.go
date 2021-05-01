@@ -83,7 +83,7 @@ func (sv *SelectionVector) Swap(i int, j int) {
 	sv.SetIndex(j, tmp)
 }
 
-func (sv *SelectionVector) ToString(count int) string {
+func (sv *SelectionVector) String(count int) string {
 	ret := "SelectionVector [" + strconv.Itoa(count) + "/" + strconv.Itoa(sv.Count()) + "] ("
 	if count > sv.Count() {
 		count = sv.Count()
