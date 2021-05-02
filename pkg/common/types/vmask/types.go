@@ -20,6 +20,24 @@ type EntryIndex struct {
 	Offset types.IDX_T
 }
 
+type IValidityMask interface {
+	InitAllValid()
+	MakeRoom(count types.IDX_T)
+	Len() types.IDX_T
+	Reset()
+	GetEntry(entry_idx types.IDX_T) EntryT
+	SetInvalid(row_idx types.IDX_T)
+	ValidateRows(rows types.IDX_T)
+	InvalidateRows(rows types.IDX_T)
+	SetValid(row_idx types.IDX_T)
+	IsRowValid(row_idx types.IDX_T) bool
+	AllValid() bool
+	Slice(other IValidityMask, offset types.IDX_T)
+	Combine(other IValidityMask, count types.IDX_T)
+	String(count types.IDX_T) string
+	GetData() []EntryT
+}
+
 type ValidityMask struct {
 	Data []EntryT
 }

@@ -78,7 +78,7 @@ func (vec *Vector) ReferenceOther(other IVector, offset types.IDX_T) {
 	}
 
 	vec.Buff.ReferenceOther(other.GetBuffer(), offset)
-	vec.Validity.Slice(*other.GetValidity(), offset)
+	vec.Validity.Slice(other.GetValidity(), offset)
 }
 
 func (vec *Vector) SliceOther(other IVector, offset types.IDX_T) {
@@ -127,7 +127,7 @@ func (vec *Vector) SetValue(idx types.IDX_T, val *value.Value) {
 	vec.Buff.SetValue(idx, val.GetData())
 }
 
-func (vec *Vector) GetValidity() *vmask.ValidityMask {
+func (vec *Vector) GetValidity() vmask.IValidityMask {
 	return vec.Validity
 }
 

@@ -53,9 +53,13 @@ func (e *EntryT) String() string {
 	return ret
 }
 
+var (
+	_ IValidityMask = (*ValidityMask)(nil)
+)
+
 type Option func(ValidityMask) ValidityMask
 
-func New(count types.IDX_T, options ...Option) *ValidityMask {
+func New(count types.IDX_T, options ...Option) IValidityMask {
 	vm := &ValidityMask{}
 	vm.MakeRoom(count)
 	for _, option := range options {
@@ -181,40 +185,45 @@ func (vm *ValidityMask) AllValid() bool {
 	return true
 }
 
-func (vm *ValidityMask) Slice(other ValidityMask, offset types.IDX_T) {
+func (vm *ValidityMask) GetData() []EntryT {
+	return vm.Data
+}
+
+func (vm *ValidityMask) Slice(other IValidityMask, offset types.IDX_T) {
 	if other.AllValid() {
 		vm.Reset()
 		return
 	}
 	if offset == 0 {
-		vm.Data = other.Data
+		vm.Data = other.GetData()
 		return
 	}
 	vm.MakeRoom(constants.STANDARD_VECTOR_SIZE)
 	vm.InitAllValid()
 
 	all_units := offset / BITS_PER_ENTRY
+	data := other.GetData()
 
 	if all_units != 0 {
 		for idx := types.IDX_0; idx+all_units < STANDARD_ENTRY_COUNT; idx++ {
-			vm.Data[idx] = other.Data[idx+all_units]
+			vm.Data[idx] = data[idx+all_units]
 		}
 	}
 	if sub_units := offset - all_units%BITS_PER_ENTRY; sub_units > 0 {
 		idx := types.IDX_0
 		for ; idx+1 < STANDARD_ENTRY_COUNT; idx++ {
-			vm.Data[idx] = (other.Data[idx] >> sub_units) | (other.Data[idx+1] << (BITS_PER_ENTRY - sub_units))
+			vm.Data[idx] = (data[idx] >> sub_units) | (data[idx+1] << (BITS_PER_ENTRY - sub_units))
 		}
 		vm.Data[idx] >>= sub_units
 	}
 }
 
-func (vm *ValidityMask) Combine(other ValidityMask, count types.IDX_T) {
+func (vm *ValidityMask) Combine(other IValidityMask, count types.IDX_T) {
 	if other.AllValid() {
 		return
 	}
 	if vm.AllValid() {
-		vm.Data = other.Data
+		vm.Data = other.GetData()
 		return
 	}
 	old_data := vm.Data
@@ -223,7 +232,7 @@ func (vm *ValidityMask) Combine(other ValidityMask, count types.IDX_T) {
 
 	ei := GetEntryIndex(count)
 	for i := types.IDX_0; i <= ei.Idx; i++ {
-		vm.Data[i] = old_data[i] & other.Data[i]
+		vm.Data[i] = old_data[i] & other.GetData()[i]
 	}
 }
 

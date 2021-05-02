@@ -43,7 +43,7 @@ type IVector interface {
 	GetLogicType() types.LogicType
 	SetValue(idx types.IDX_T, val *value.Value)
 	GetValue(idx types.IDX_T) interface{}
-	GetValidity() *vmask.ValidityMask
+	GetValidity() vmask.IValidityMask
 	String() string
 	IsNull(opt ...interface{}) bool
 	SetNull(is_null bool, opt ...interface{})
@@ -52,6 +52,6 @@ type IVector interface {
 type Vector struct {
 	Buff vbuff.IVectorBuffer // The main buffer holding the data of the vector
 	// ExtraBuff *vbuff.VectorBuffer // The buffer holding extra data of the vector
-	Validity *vmask.ValidityMask
+	Validity vmask.IValidityMask
 	Type     VectorType
 }
