@@ -59,4 +59,10 @@ func TestCopyFlatVector(t *testing.T) {
 	assert.Equal(t, des.GetValue(count/2+30), float32(10000))
 	assert.Equal(t, des.GetValue(count/2+39), float32(10009))
 	assert.Equal(t, des.GetValue(count/2+40), float32(0))
+
+	// t.Log(src.GetBuffer().ToString(count))
+	// for i := 0; i < 1024; i++ {
+	// 	des2 := NewVector(WithInitByLogicType(src.GetLogicType()))
+	// 	Copy(src, des2, 0, 0, count)
+	// }
 }
