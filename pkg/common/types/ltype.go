@@ -7,6 +7,7 @@ import (
 var (
 	LT_INVALID   = LogicType{LType: INVALID}
 	LT_SQLNULL   = LogicType{LType: SQLNULL}
+	LT_VALIDITY  = LogicType{LType: VALIDITY}
 	LT_BOOLEAN   = LogicType{LType: BOOLEAN}
 	LT_TINYINT   = LogicType{LType: TINYINT}
 	LT_UTINYINT  = LogicType{LType: UTINYINT}
@@ -78,6 +79,8 @@ func (lt *LogicType) GetPhysicalType() PhysicalType {
 		return P_FLOAT32
 	case FLOAT64:
 		return P_FLOAT64
+	case VALIDITY:
+		return P_BIT
 	case INVALID:
 		return P_INVALID
 	case UNKNOWN:
@@ -120,6 +123,8 @@ func (lti LogicalTypeId) String() string {
 		return "FLOAT64"
 	case SQLNULL:
 		return "NULL"
+	case VALIDITY:
+		return "VALIDITY"
 	case INVALID:
 		return "INVALID"
 	case UNKNOWN:

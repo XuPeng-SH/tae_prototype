@@ -27,6 +27,7 @@ func (idx IDX_T) String() string {
 const (
 	P_NA PhysicalType = iota
 	P_BOOL
+	P_BIT
 	P_UINT8
 	P_INT8
 	P_UINT16
@@ -55,6 +56,7 @@ const (
 	PSIZE_INT     = (IDX_T)(unsafe.Sizeof(int(0)))
 	PSIZE_FLOAT32 = (IDX_T)(unsafe.Sizeof(float32(0)))
 	PSIZE_FLOAT64 = (IDX_T)(unsafe.Sizeof(float64(0)))
+	PSIZE_BIT     = IDX_T(1)
 	PSIZE_INVALID = IDX_T(0)
 )
 

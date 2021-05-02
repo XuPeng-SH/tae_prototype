@@ -75,7 +75,6 @@ func (useg *UpdateSegment) FindSegByVecIdx(vec_idx types.IDX_T) seg.ISegment {
 	base_vec_index := WhichVecIdx(useg.GetStartRow())
 	if vec_idx < base_vec_index {
 		log.Warnf(fmt.Sprintf("Start vector index %d should not be less than: %d", vec_idx, base_vec_index))
-		// panic(fmt.Sprintf("Start vector index should not be less than: %d", base_vec_index))
 		return nil
 	}
 	var active_useg seg.ISegment

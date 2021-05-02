@@ -8,6 +8,8 @@ func (pt PhysicalType) Size() IDX_T {
 	switch pt {
 	case P_INVALID:
 		return PSIZE_INVALID
+	case P_BIT:
+		return PSIZE_BIT
 	case P_BOOL:
 		return PSIZE_BOOL
 	case P_UINT8:
@@ -40,6 +42,8 @@ func (pt PhysicalType) String() string {
 	switch pt {
 	case P_INVALID:
 		return "INVALID"
+	case P_BIT:
+		return "BIT"
 	case P_BOOL:
 		return "BOOL"
 	case P_UINT8:
