@@ -24,14 +24,23 @@ func (bat *Batch) Rows() types.IDX_T {
 	return bat.RowCount
 }
 
-func (bat *Batch) GetCell(row, col types.IDX_T) value.Value {
+func (bat *Batch) GetCell(row, col types.IDX_T) *value.Value {
 	if row >= bat.RowCount || col >= (types.IDX_T)(len(bat.Data)) {
 		panic(fmt.Sprintf("(row,col)=(%v,%v) is out of range", row, col))
 	}
-	return bat.Data[col].GetValue(row).(value.Value)
+	return bat.Data[col].GetValue(row).(*value.Value)
 }
 
-func (bat *Batch) SetCell(row, col types.IDX_T, val value.Value) {
+func (bat *Batch) Verify() {
+}
+
+func (bat *Batch) Normalify() {
+	for _, vec := range bat.Data {
+		vec.Normalify(bat.RowCount)
+	}
+}
+
+func (bat *Batch) SetCell(row, col types.IDX_T, val *value.Value) {
 	if row >= bat.RowCount || col >= (types.IDX_T)(len(bat.Data)) {
 		panic(fmt.Sprintf("(row,col)=(%v,%v) is out of range", row, col))
 	}

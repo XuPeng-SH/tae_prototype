@@ -55,7 +55,7 @@ func WithCollation(collation string) LTOption {
 	}
 }
 
-func (lt *LogicType) GetPhysicalType() PhysicalType {
+func (lt LogicType) GetPhysicalType() PhysicalType {
 	switch lt.LType {
 	case BOOLEAN:
 		return P_BOOL
@@ -89,11 +89,11 @@ func (lt *LogicType) GetPhysicalType() PhysicalType {
 	panic(fmt.Sprintf("UNKNOWN type: %v", lt.LType))
 }
 
-func (lt *LogicType) GetID() LogicalTypeId {
+func (lt LogicType) GetID() LogicalTypeId {
 	return lt.LType
 }
 
-func (lt *LogicType) String() string {
+func (lt LogicType) String() string {
 	return lt.LType.String()
 }
 

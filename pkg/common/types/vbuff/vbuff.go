@@ -148,6 +148,10 @@ func (vf *VectorBuffer) SetValue(idx types.IDX_T, val interface{}) {
 	}
 }
 
+func (vb *VectorBuffer) GetData() []byte {
+	return vb.Data
+}
+
 func (vb *VectorBuffer) MaxItems() types.IDX_T {
 	return (types.IDX_T)(len(vb.Data)) / vb.ItemSize
 }

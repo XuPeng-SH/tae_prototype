@@ -7,12 +7,14 @@ import (
 	"tae/pkg/common/types/selvec"
 	"tae/pkg/common/types/value"
 	"tae/pkg/common/types/vbuff"
+	"tae/pkg/common/types/vmask"
 )
 
 func NewVector(options ...Option) *Vector {
 	v := &Vector{
-		Buff: vbuff.NewVectorBuffer(vbuff.WithItemType(types.LT_INVALID)),
-		Type: FLAT_VECTOR,
+		Buff:     vbuff.NewVectorBuffer(vbuff.WithItemType(types.LT_INVALID)),
+		Type:     FLAT_VECTOR,
+		Validity: vmask.New(types.IDX_0),
 	}
 	for _, option := range options {
 		*v = option(*v)
@@ -31,7 +33,7 @@ func WithInitByLogicType(lt types.LogicType) Option {
 	}
 }
 
-func WithInitByValue(val value.Value) Option {
+func WithInitByValue(val *value.Value) Option {
 	return func(vec Vector) Vector {
 		vec.Type = CONSTANT_VECTOR
 		lt := val.GetLogicType()
@@ -40,6 +42,21 @@ func WithInitByValue(val value.Value) Option {
 		vec.SetValue(0, val)
 		return vec
 	}
+}
+
+func (vec *Vector) Normalify(count types.IDX_T) {
+	switch vec.Type {
+	case FLAT_VECTOR:
+		return
+	case DICTIONARY_VECTOR:
+		// TODO
+		return
+	case CONSTANT_VECTOR:
+		// TODO
+		return
+
+	}
+	panic(fmt.Sprintf("Should not call Normalify for vector type: %v", vec.Type))
 }
 
 func (vec *Vector) ReferenceOther(other Vector, offset types.IDX_T) {
@@ -90,7 +107,7 @@ func (vec *Vector) GetLogicType() types.LogicType {
 	return vec.Buff.GetItemType()
 }
 
-func (vec *Vector) SetValue(idx types.IDX_T, val value.Value) {
+func (vec *Vector) SetValue(idx types.IDX_T, val *value.Value) {
 	lt := vec.GetLogicType()
 	if lt != val.GetLogicType() {
 		// PXU TODO: Try Cast
@@ -98,6 +115,10 @@ func (vec *Vector) SetValue(idx types.IDX_T, val value.Value) {
 	}
 
 	vec.Buff.SetValue(idx, val.GetData())
+}
+
+func (vec *Vector) GetValidity() *vmask.ValidityMask {
+	return vec.Validity
 }
 
 func (vec *Vector) GetValue(idx types.IDX_T) interface{} {

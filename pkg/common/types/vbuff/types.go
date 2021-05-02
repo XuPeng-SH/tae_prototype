@@ -47,7 +47,7 @@ type IVectorBuffer interface {
 }
 
 type VectorBuffer struct {
-	IVectorBuffer
+	// IVectorBuffer
 	Type     VectorBufferType
 	Data     []byte
 	ItemType types.LogicType

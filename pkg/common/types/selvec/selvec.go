@@ -85,7 +85,15 @@ func (sv *SelectionVector) Swap(i, j types.IDX_T) {
 	sv.SetIndex((types.IDX_T)(j), tmp)
 }
 
-func (sv *SelectionVector) String(count types.IDX_T) string {
+func (sv *SelectionVector) String() string {
+	count := sv.Count()
+	if count >= 10 {
+		count = 10
+	}
+	return sv.ToString(count)
+}
+
+func (sv *SelectionVector) ToString(count types.IDX_T) string {
 	ret := fmt.Sprintf("SelectionVector [%v/%v]", count, sv.Count())
 	if count > sv.Count() {
 		count = sv.Count()

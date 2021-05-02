@@ -9,9 +9,11 @@ import (
 type IBatch interface {
 	Cols() types.IDX_T
 	Rows() types.IDX_T
-	GetCell(row, col types.IDX_T) value.Value
-	SetCell(row, col types.IDX_T, val value.Value)
+	GetCell(row, col types.IDX_T) *value.Value
+	SetCell(row, col types.IDX_T, val *value.Value)
 	Append(other IBatch)
+	Verify()
+	Normalify()
 	// Reset()
 	// Drop()
 	// ReferenceOther(other IBatch)
@@ -22,4 +24,10 @@ type IBatch interface {
 type Batch struct {
 	Data     []*vector.Vector
 	RowCount types.IDX_T
+}
+
+type Collection struct {
+	Data  []IBatch
+	Count types.IDX_T
+	Types []types.LogicType
 }

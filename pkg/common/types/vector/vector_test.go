@@ -25,7 +25,7 @@ func TestInitWithLogicType(t *testing.T) {
 func TestInitWithValue(t *testing.T) {
 	f_val := float32(-1.567)
 	val := value.NewValue(f_val)
-	vec := NewVector(WithInitByValue(*val))
+	vec := NewVector(WithInitByValue(val))
 	t.Logf("vec itemsize=%d", vec.GetBuffer().GetItemSize())
 	t.Logf("vec itemcount=%d", vec.GetBuffer().MaxItems())
 	t.Logf("vec size=%d", vec.GetBuffer().Size())
