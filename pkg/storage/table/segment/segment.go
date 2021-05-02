@@ -33,6 +33,11 @@ func (seg *Segment) GetRowCount() types.IDX_T {
 	return seg.RowCount
 }
 
+func (seg *Segment) Capacity() types.IDX_T {
+	// PXU TODO
+	return seg.RowCount
+}
+
 func (seg *Segment) Append(next ISegment) {
 	seg.Next = next
 }

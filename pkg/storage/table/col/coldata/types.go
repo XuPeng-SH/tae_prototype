@@ -8,8 +8,7 @@ type IColumnData interface {
 }
 
 type ColumnData struct {
-	IColumnData
 	ColumnType types.LogicType
-	ColumnIdx  types.SMIDX_T
+	ColumnIdx  types.IDX_T
 	RowCount   types.IDX_T
 }
