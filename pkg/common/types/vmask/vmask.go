@@ -57,7 +57,7 @@ type Option func(ValidityMask) ValidityMask
 
 func New(count types.IDX_T, options ...Option) *ValidityMask {
 	vm := &ValidityMask{}
-	vm.Init(count)
+	vm.MakeRoom(count)
 	for _, option := range options {
 		*vm = option(*vm)
 	}
@@ -74,12 +74,15 @@ func (vm *ValidityMask) InitAllValid() {
 	}
 }
 
-func (vm *ValidityMask) Init(count types.IDX_T) {
+func (vm *ValidityMask) MakeRoom(count types.IDX_T) {
 	if count > constants.STANDARD_VECTOR_SIZE {
 		panic(fmt.Sprintf("Too big count, should not be larger than %d", constants.STANDARD_VECTOR_SIZE))
 	}
 
 	if count == 0 {
+		return
+	}
+	if cap(vm.Data) > 0 {
 		return
 	}
 	entry_count := (int)(WhichEntry((types.IDX_T)(count)))
@@ -132,7 +135,7 @@ func (vm *ValidityMask) InvalidateRows(rows types.IDX_T) {
 		return
 	}
 	if vm.Len() == 0 {
-		vm.Init(rows)
+		vm.MakeRoom(rows)
 	}
 
 	ei := GetEntryIndex(rows)
@@ -187,7 +190,7 @@ func (vm *ValidityMask) Slice(other ValidityMask, offset types.IDX_T) {
 		vm.Data = other.Data
 		return
 	}
-	vm.Init(constants.STANDARD_VECTOR_SIZE)
+	vm.MakeRoom(constants.STANDARD_VECTOR_SIZE)
 	vm.InitAllValid()
 
 	all_units := offset / BITS_PER_ENTRY
@@ -215,7 +218,7 @@ func (vm *ValidityMask) Combine(other ValidityMask, count types.IDX_T) {
 		return
 	}
 	old_data := vm.Data
-	vm.Init(constants.STANDARD_VECTOR_SIZE)
+	vm.MakeRoom(constants.STANDARD_VECTOR_SIZE)
 	vm.InitAllValid()
 
 	ei := GetEntryIndex(count)

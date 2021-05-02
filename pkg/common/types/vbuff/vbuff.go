@@ -160,6 +160,18 @@ func (vb *VectorBuffer) GetItemSize() types.IDX_T {
 	return vb.ItemSize
 }
 
+func (vb *VectorBuffer) ForceRepeat(from_idx, count types.IDX_T) {
+	if count == 0 {
+		return
+	}
+	if from_idx+count >= vb.MaxItems() {
+		panic(fmt.Sprintf("OutofRange %d/%d", from_idx+count, vb.MaxItems()))
+	}
+	for i := types.IDX_1; i < count; i++ {
+		copy(vb.Data[vb.ItemSize*(i+from_idx):], vb.Data[vb.ItemSize*from_idx:vb.ItemSize*(from_idx+1)])
+	}
+}
+
 func (vb *VectorBuffer) String() string {
 	count := vb.MaxItems()
 	if count >= 32 {

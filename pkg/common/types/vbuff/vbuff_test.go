@@ -1,9 +1,12 @@
 package vbuff
 
 import (
-	"github.com/stretchr/testify/assert"
 	"tae/pkg/common/types"
+	"tae/pkg/common/types/constants"
+	// "tae/pkg/common/types/value"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestInteger(t *testing.T) {
@@ -47,4 +50,21 @@ func TestDictBuff(t *testing.T) {
 	assert.Equal(t, dbuff.GetType(), DICTIONARY_BUFFER)
 	assert.Equal(t, dbuff.GetItemType(), types.LT_FLOAT32)
 	t.Log(dbuff.SelVec.ToString(10))
+}
+
+func TestForceRepeat(t *testing.T) {
+	vf := NewVectorBuffer(WithItemType(types.LT_FLOAT64),
+		WithSize(types.LT_FLOAT64.GetPhysicalType().Size()*constants.STANDARD_VECTOR_SIZE))
+	fval := float64(0.232)
+	idx := types.IDX_T(2)
+	vf.SetValue(idx, fval)
+	assert.Equal(t, vf.GetValue(idx), fval)
+	t.Log(vf)
+	count := types.IDX_T(5)
+	vf.ForceRepeat(idx, count)
+	t.Log(vf)
+	for i := idx; i < idx+count; i++ {
+		assert.Equal(t, vf.GetValue(i), fval)
+	}
+	assert.Equal(t, vf.GetValue(idx+count), float64(0))
 }

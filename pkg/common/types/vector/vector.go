@@ -52,9 +52,12 @@ func (vec *Vector) Normalify(count types.IDX_T) {
 		// TODO
 		return
 	case CONSTANT_VECTOR:
-		// TODO
+		if vec.IsNull() {
+			vec.Validity.MakeRoom(constants.STANDARD_VECTOR_SIZE)
+			vec.Validity.InvalidateRows(count)
+			return
+		}
 		return
-
 	}
 	panic(fmt.Sprintf("Should not call Normalify for vector type: %v", vec.Type))
 }
