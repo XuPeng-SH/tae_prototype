@@ -46,5 +46,6 @@ func TestAll(t *testing.T) {
 	assert.Equal(t, new_sv.GetIndex(0), EntryT(4))
 	assert.Equal(t, new_sv.GetIndex(1), EntryT(3))
 
-	t.Log(ZERO_SV.ToString(2048))
+	t.Log(ZERO_SV.ToString(10))
+	t.Log(SEQUENTIAL_SV.ToString(10))
 }

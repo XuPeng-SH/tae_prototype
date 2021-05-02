@@ -35,6 +35,7 @@ func (vt VectorBufferType) String() string {
 
 type IVectorBuffer interface {
 	String() string
+	ToString(opts ...interface{}) string
 	Size() types.IDX_T
 	MaxItems() types.IDX_T
 	ReferenceOther(other IVectorBuffer, offset types.IDX_T)

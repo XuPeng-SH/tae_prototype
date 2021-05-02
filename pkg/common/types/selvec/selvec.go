@@ -31,8 +31,8 @@ func (sv *SelectionVector) InitWithCount(count types.IDX_T) {
 	sv.Data = data
 }
 
-func (sv *SelectionVector) InitWithData(data SelectionData) {
-	sv.Data = &data
+func (sv *SelectionVector) InitWithData(data *SelectionData) {
+	sv.Data = data
 }
 
 func (sv *SelectionVector) InitWithOther(other SelectionVector) {

@@ -36,3 +36,15 @@ func TestInitWithValue(t *testing.T) {
 	assert.Equal(t, vec.GetBuffer().GetType(), vbuff.STANDARD_BUFFER)
 	assert.Equal(t, vec.GetType(), CONSTANT_VECTOR)
 }
+
+func TestFlatVector(t *testing.T) {
+	// src := NewVector(WithInitByLogicType(types.LT_BIGINT))
+	src := NewVector(WithInitByLogicType(types.LT_FLOAT32))
+	for i := types.IDX_0; i < 4; i++ {
+		val := value.NewValue(float32(i))
+		src.SetValue(i, val)
+		val2 := src.GetValue(i)
+		assert.Equal(t, val.GetValue(), val2)
+	}
+	t.Log(src)
+}

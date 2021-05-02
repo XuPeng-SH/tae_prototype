@@ -110,7 +110,7 @@ func (vf *VectorBuffer) SetValue(idx types.IDX_T, val interface{}) {
 	}
 	switch bytes := val.(type) {
 	case []byte:
-		copy(vf.Data[idx:], bytes)
+		copy(vf.Data[idx*vf.ItemSize:], bytes)
 		return
 	}
 	switch vf.ItemType.GetID() {

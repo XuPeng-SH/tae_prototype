@@ -2,14 +2,19 @@ package vector
 
 import (
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	"tae/pkg/common/types"
+	"tae/pkg/common/types/constants"
 	"tae/pkg/common/types/selvec"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func CopyWithSelVec(src_vec, des_vec *Vector, src_offset, des_offset, count types.IDX_T, sel_vec *selvec.SelectionVector) {
 	if des_vec.Type != FLAT_VECTOR {
 		panic(fmt.Sprintf("Should not call CopyWithSelVec for target vector type: %s", src_vec.Type))
+	}
+	if des_vec.GetBuffer().MaxItems() < des_offset+count {
+		panic(fmt.Sprintf("Dest overflow %d/%d", des_vec.GetBuffer().MaxItems(), des_offset+count))
 	}
 	if src_vec.GetLogicType() != des_vec.GetLogicType() {
 		msg := fmt.Sprintf("Src %s and dest %s type mismatch", src_vec.GetLogicType(), des_vec.GetLogicType())
@@ -26,9 +31,8 @@ func CopyWithSelVec(src_vec, des_vec *Vector, src_offset, des_offset, count type
 	case DICTIONARY_VECTOR:
 		// PXU TODO
 	case FLAT_VECTOR:
-		// PXU TOD
 	default:
-		panic(fmt.Sprintf("Should not call Normalify for vector type: %v", src_vec.Type))
+		panic(fmt.Sprintf("Should not call CopyWithSelVec for vector type: %v", src_vec.Type))
 	}
 
 	// Handle mask
@@ -73,7 +77,11 @@ func Copy(src_vec, des_vec *Vector, src_offset, des_offset, count types.IDX_T) {
 		// PXU TODO
 		return
 	case FLAT_VECTOR:
-		// PXU TOD
+		sel := selvec.SEQUENTIAL_SV
+		if des_offset+count > constants.STANDARD_VECTOR_SIZE {
+			sel = selvec.New(selvec.WithCount(des_offset + count))
+		}
+		CopyWithSelVec(src_vec, des_vec, src_offset, des_offset, count, sel)
 		return
 	}
 	panic(fmt.Sprintf("Should not call Copy for source vector type: %v", src_vec.Type))
