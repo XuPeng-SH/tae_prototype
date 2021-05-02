@@ -6,6 +6,10 @@ import (
 	"tae/pkg/common/types"
 )
 
+var (
+	_ ISelectionVector = (*SelectionVector)(nil)
+)
+
 func New(options ...Option) *SelectionVector {
 	sv := &SelectionVector{
 		// Data: &SelectionData{},
@@ -35,8 +39,12 @@ func (sv *SelectionVector) InitWithData(data *SelectionData) {
 	sv.Data = data
 }
 
-func (sv *SelectionVector) InitWithOther(other SelectionVector) {
-	sv.Data = other.Data
+func (sv *SelectionVector) GetData() *SelectionData {
+	return sv.Data
+}
+
+func (sv *SelectionVector) InitWithOther(other ISelectionVector) {
+	sv.Data = other.GetData()
 }
 
 func (sv *SelectionVector) Empty() bool {

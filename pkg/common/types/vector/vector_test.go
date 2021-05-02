@@ -55,7 +55,7 @@ func TestNormality(t *testing.T) {
 	t.Log(const_vec)
 	assert.Equal(t, const_vec.GetType(), CONSTANT_VECTOR)
 	count := types.IDX_T(10)
-	const_vec.Normalify(count)
+	const_vec.Flatten(count)
 	assert.Equal(t, const_vec.GetType(), FLAT_VECTOR)
 	t.Log(const_vec)
 	for i := types.IDX_0; i < count; i++ {

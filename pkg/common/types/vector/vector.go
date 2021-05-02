@@ -10,6 +10,10 @@ import (
 	"tae/pkg/common/types/vmask"
 )
 
+var (
+	_ IVector = (*Vector)(nil)
+)
+
 func NewVector(options ...Option) *Vector {
 	v := &Vector{
 		Buff:     vbuff.NewVectorBuffer(vbuff.WithItemType(types.LT_INVALID)),
@@ -44,7 +48,7 @@ func WithInitByValue(val *value.Value) Option {
 	}
 }
 
-func (vec *Vector) Normalify(count types.IDX_T) {
+func (vec *Vector) Flatten(count types.IDX_T) {
 	switch vec.Type {
 	case FLAT_VECTOR:
 		return
@@ -62,37 +66,37 @@ func (vec *Vector) Normalify(count types.IDX_T) {
 		vec.Type = FLAT_VECTOR
 		return
 	}
-	panic(fmt.Sprintf("Should not call Normalify for vector type: %v", vec.Type))
+	panic(fmt.Sprintf("Should not call Flatten for vector type: %v", vec.Type))
 }
 
-func (vec *Vector) ReferenceOther(other Vector, offset types.IDX_T) {
-	vec.Type = other.Type
+func (vec *Vector) ReferenceOther(other IVector, offset types.IDX_T) {
+	vec.Type = other.GetType()
 	if offset == 0 {
-		vec.Buff = other.Buff
-		vec.Validity = other.Validity
+		vec.Buff = other.GetBuffer()
+		vec.Validity = other.GetValidity()
 		return
 	}
 
-	vec.Buff.ReferenceOther(other.Buff, offset)
-	vec.Validity.Slice(*other.Validity, offset)
+	vec.Buff.ReferenceOther(other.GetBuffer(), offset)
+	vec.Validity.Slice(*other.GetValidity(), offset)
 }
 
-func (vec *Vector) SliceOther(other Vector, offset types.IDX_T) {
-	if other.Type == CONSTANT_VECTOR {
+func (vec *Vector) SliceOther(other IVector, offset types.IDX_T) {
+	if other.GetType() == CONSTANT_VECTOR {
 		vec.ReferenceOther(other, 0)
 	}
-	if other.Type != FLAT_VECTOR || vec.Type != FLAT_VECTOR {
+	if other.GetType() != FLAT_VECTOR || vec.Type != FLAT_VECTOR {
 		panic("Slice should only on FLAT_VECTOR")
 	}
 	vec.ReferenceOther(other, offset)
 }
 
-func (vec *Vector) SliceOtherWithSel(other Vector, sel selvec.SelectionVector, count types.IDX_T) {
+func (vec *Vector) SliceOtherWithSel(other IVector, sel selvec.ISelectionVector, count types.IDX_T) {
 	vec.ReferenceOther(other, 0)
 	vec.SliceWithSel(sel, count)
 }
 
-func (vec *Vector) SliceWithSel(sel selvec.SelectionVector, count types.IDX_T) {
+func (vec *Vector) SliceWithSel(sel selvec.ISelectionVector, count types.IDX_T) {
 	if vec.Type == CONSTANT_VECTOR {
 		return
 	}

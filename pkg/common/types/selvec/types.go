@@ -1,7 +1,7 @@
 package selvec
 
 import (
-	// "tae/pkg/common/types"
+	"tae/pkg/common/types"
 	"tae/pkg/common/types/constants"
 	"unsafe"
 )
@@ -26,6 +26,21 @@ func init() {
 	}
 	SEQUENTIAL_SV = New()
 	SEQUENTIAL_SV.InitWithData(sdata)
+}
+
+type ISelectionVector interface {
+	InitWithCount(count types.IDX_T)
+	InitWithData(data *SelectionData)
+	InitWithOther(other ISelectionVector)
+	Empty() bool
+	SetIndex(index types.IDX_T, loc EntryT)
+	GetIndex(index types.IDX_T) EntryT
+	Count() types.IDX_T
+	Slice(other SelectionVector, count types.IDX_T) *SelectionData
+	Swap(i, j types.IDX_T)
+	String() string
+	ToString(count types.IDX_T) string
+	GetData() *SelectionData
 }
 
 type SelectionData struct {

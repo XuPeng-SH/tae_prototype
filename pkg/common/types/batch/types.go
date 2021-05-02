@@ -13,7 +13,7 @@ type IBatch interface {
 	SetCell(row, col types.IDX_T, val *value.Value)
 	Append(other IBatch)
 	Verify()
-	Normalify()
+	Flatten()
 	// Reset()
 	// Drop()
 	// ReferenceOther(other IBatch)

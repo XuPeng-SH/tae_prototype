@@ -34,9 +34,9 @@ func (bat *Batch) GetCell(row, col types.IDX_T) *value.Value {
 func (bat *Batch) Verify() {
 }
 
-func (bat *Batch) Normalify() {
+func (bat *Batch) Flatten() {
 	for _, vec := range bat.Data {
-		vec.Normalify(bat.RowCount)
+		vec.Flatten(bat.RowCount)
 	}
 }
 

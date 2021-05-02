@@ -7,7 +7,7 @@ import (
 
 type DictionaryBuffer struct {
 	VectorBuffer
-	SelVec *selvec.SelectionVector
+	SelVec selvec.ISelectionVector
 }
 
 var (
@@ -33,7 +33,7 @@ func WithDictBuffCount(count types.IDX_T) DictBuffOption {
 	}
 }
 
-func WithDictBuffSelectionVector(sv selvec.SelectionVector) DictBuffOption {
+func WithDictBuffSelectionVector(sv selvec.ISelectionVector) DictBuffOption {
 	return func(db DictionaryBuffer) DictionaryBuffer {
 		db.SelVec = selvec.New()
 		db.SelVec.InitWithOther(sv)
