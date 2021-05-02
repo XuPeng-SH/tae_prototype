@@ -57,6 +57,9 @@ func (vec *Vector) Normalify(count types.IDX_T) {
 			vec.Validity.InvalidateRows(count)
 			return
 		}
+		vec.Buff.Resize(false)
+		vec.Buff.ForceRepeat(0, count)
+		vec.Type = FLAT_VECTOR
 		return
 	}
 	panic(fmt.Sprintf("Should not call Normalify for vector type: %v", vec.Type))

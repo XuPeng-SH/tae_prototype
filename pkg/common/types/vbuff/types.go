@@ -46,6 +46,8 @@ type IVectorBuffer interface {
 	GetData() []byte
 	GetType() VectorBufferType
 	ForceRepeat(from_idx, count types.IDX_T)
+	Reset()
+	Resize(reset bool, opts ...interface{})
 }
 
 type VectorBuffer struct {

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 	"tae/pkg/common/types"
+	"tae/pkg/common/types/constants"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -60,6 +61,35 @@ func (vf *VectorBuffer) GetItemType() types.LogicType {
 
 func (vf *VectorBuffer) Size() types.IDX_T {
 	return (types.IDX_T)(len(vf.Data))
+}
+
+func (vf *VectorBuffer) Resize(reset bool, opts ...interface{}) {
+	count := constants.STANDARD_VECTOR_SIZE
+	if len(opts) > 0 {
+		opt_count := opts[0].(types.IDX_T)
+		if opt_count > count {
+			panic(fmt.Sprintf("Max size should no more than %d", count))
+		}
+		count = opt_count
+	}
+	if int(count) <= cap(vf.Data)/int(vf.ItemSize) {
+		if reset {
+			vf.Reset()
+		}
+		return
+	}
+
+	if reset {
+		vf.Data = make([]byte, vf.ItemSize*count)
+	} else {
+		old := vf.Data
+		vf.Data = make([]byte, vf.ItemSize*count)
+		copy(vf.Data, old)
+	}
+}
+
+func (vf *VectorBuffer) Reset() {
+	vf.Data = vf.Data[:0]
 }
 
 func (vf *VectorBuffer) GetValue(idx types.IDX_T) (ret interface{}) {

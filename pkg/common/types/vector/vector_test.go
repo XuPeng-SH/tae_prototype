@@ -38,7 +38,6 @@ func TestInitWithValue(t *testing.T) {
 }
 
 func TestFlatVector(t *testing.T) {
-	// src := NewVector(WithInitByLogicType(types.LT_BIGINT))
 	src := NewVector(WithInitByLogicType(types.LT_FLOAT32))
 	for i := types.IDX_0; i < 4; i++ {
 		val := value.NewValue(float32(i))
@@ -47,4 +46,20 @@ func TestFlatVector(t *testing.T) {
 		assert.Equal(t, val.GetValue(), val2)
 	}
 	t.Log(src)
+}
+
+func TestNormality(t *testing.T) {
+	fval := float32(1.238)
+	val := value.NewValue(fval)
+	const_vec := NewVector(WithInitByValue(val))
+	t.Log(const_vec)
+	assert.Equal(t, const_vec.GetType(), CONSTANT_VECTOR)
+	count := types.IDX_T(10)
+	const_vec.Normalify(count)
+	assert.Equal(t, const_vec.GetType(), FLAT_VECTOR)
+	t.Log(const_vec)
+	for i := types.IDX_0; i < count; i++ {
+		assert.Equal(t, const_vec.GetValue(i), fval)
+	}
+	assert.Equal(t, const_vec.GetValue(count), float32(0))
 }
