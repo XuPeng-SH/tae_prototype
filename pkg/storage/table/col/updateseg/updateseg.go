@@ -66,6 +66,11 @@ func (useg *UpdateSegment) HasVectorRangeUpdate(vstart_idx, vend_idx types.IDX_T
 	return false
 }
 
+func (useg *UpdateSegment) FindSegByRowIdx(row_idx types.IDX_T) seg.ISegment {
+	vec_idx := WhichVecIdx(row_idx)
+	return useg.FindSegByVecIdx(vec_idx)
+}
+
 func (useg *UpdateSegment) FindSegByVecIdx(vec_idx types.IDX_T) seg.ISegment {
 	base_vec_index := WhichVecIdx(useg.GetStartRow())
 	if vec_idx < base_vec_index {

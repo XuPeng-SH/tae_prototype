@@ -35,4 +35,6 @@ func TestFindSeg(t *testing.T) {
 
 	fseg5 := useg2.FindSegByVecIdx(WhichVecIdx(start1))
 	assert.Equal(t, fseg5, nil)
+	fseg6 := useg1.FindSegByRowIdx(start2)
+	assert.Equal(t, fseg6, useg2)
 }

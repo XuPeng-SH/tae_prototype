@@ -20,6 +20,7 @@ type IUpdateSegment interface {
 	HasVectorUpdate(vec_idx types.IDX_T) bool
 	HasVectorRangeUpdate(vstart_idx, vend_idx types.IDX_T) bool
 	FindSegByVecIdx(vec_idx types.IDX_T) seg.ISegment
+	FindSegByRowIdx(row_idx types.IDX_T) seg.ISegment
 }
 
 type UpdateNode struct {
