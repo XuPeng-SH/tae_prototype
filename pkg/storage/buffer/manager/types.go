@@ -17,7 +17,7 @@ type IBufferManager interface {
 	// SetCapacity(c types.IDX_T)
 
 	RegisterBlock(blk_id layout.BlockId) blk.IBlockHandle
-	// UnregisterBlock(blk_id layout.BlockId, can_destroy bool)
+	UnregisterBlock(blk_id layout.BlockId, can_destroy bool)
 
 	// RegisterMemory(blk_id layout.BlockId, can_destroy bool) blk.IBlockHandle
 	// // Allocate(size types.IDX_T) buf.IBufferH

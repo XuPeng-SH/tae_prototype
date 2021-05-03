@@ -38,7 +38,7 @@ func (mgr *BufferManager) RegisterBlock(blk_id layout.BlockId) blk.IBlockHandle 
 	return handle
 }
 
-func (mgr *BufferManager) UnregisterBlock(blk_id layout.BlockId) {
+func (mgr *BufferManager) UnregisterBlock(blk_id layout.BlockId, can_destroy bool) {
 	if blk_id.IsTransientBlock() {
 		// PXU TODO
 		return

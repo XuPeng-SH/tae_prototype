@@ -1,13 +1,10 @@
 package manager
 
 import (
+	"github.com/stretchr/testify/assert"
 	"tae/pkg/common/types"
 	"tae/pkg/storage/layout"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
-	// "github.com/stretchr/testify/assert"
-	// blk "tae/pkg/storage/buffer/block"
 )
 
 func TestManager(t *testing.T) {
@@ -30,4 +27,17 @@ func TestManager(t *testing.T) {
 	h2 := mgr.RegisterBlock(blk_2)
 	assert.Equal(t, len(mgr.(*BufferManager).Blocks), 3)
 	assert.Equal(t, blk_2, h2.GetID())
+
+	h1.Close()
+	assert.True(t, h1.IsClosed())
+	mgr_h1, ok := mgr.(*BufferManager).Blocks[blk_1]
+	assert.True(t, ok)
+	assert.True(t, mgr_h1.IsClosed())
+	mgr_h2, ok := mgr.(*BufferManager).Blocks[blk_2]
+	assert.True(t, ok)
+	assert.False(t, mgr_h2.IsClosed())
+
+	assert.Equal(t, len(mgr.(*BufferManager).Blocks), 3)
+	mgr.UnregisterBlock(blk_0, true)
+	assert.Equal(t, len(mgr.(*BufferManager).Blocks), 2)
 }
