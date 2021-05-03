@@ -32,6 +32,19 @@ func (vt VectorType) String() string {
 	return fmt.Sprintf("Unkown type: %d", vt)
 }
 
+type SequenceData struct {
+	Start int64
+	Step  int64
+}
+
+func (sd *SequenceData) String() string {
+	return fmt.Sprintf("SeqData(%d,%d)", sd.Start, sd.Step)
+}
+
+type ISequenceVector interface {
+	GetSequence() (result *SequenceData)
+}
+
 type IVector interface {
 	ReferenceOther(other IVector, offset types.IDX_T)
 	Flatten(count types.IDX_T)
@@ -47,6 +60,8 @@ type IVector interface {
 	String() string
 	IsNull(opt ...interface{}) bool
 	SetNull(is_null bool, opt ...interface{})
+	Reset()
+	ToSeqenceVector(seq *SequenceData)
 }
 
 type Vector struct {

@@ -8,10 +8,12 @@ import (
 	"tae/pkg/common/types/value"
 	"tae/pkg/common/types/vbuff"
 	"tae/pkg/common/types/vmask"
+	"unsafe"
 )
 
 var (
-	_ IVector = (*Vector)(nil)
+	_ IVector         = (*Vector)(nil)
+	_ ISequenceVector = (*Vector)(nil)
 )
 
 func NewVector(options ...Option) *Vector {
@@ -46,6 +48,31 @@ func WithInitByValue(val *value.Value) Option {
 		vec.SetValue(0, val)
 		return vec
 	}
+}
+
+func (vec *Vector) ToSeqenceVector(seq *SequenceData) {
+	vec.Reset()
+	vec.Buff = vbuff.NewVectorBuffer(vbuff.WithItemType(types.LT_BIGINT),
+		vbuff.WithSize(types.IDX_T(unsafe.Sizeof(SequenceData{}))))
+	vec.Buff.SetValue(types.IDX_0, seq.Start)
+	vec.Buff.SetValue(types.IDX_1, seq.Step)
+	vec.Type = SEQUENCE_VECTOR
+}
+
+func (vec *Vector) GetSequence() *SequenceData {
+	if vec.Type != SEQUENCE_VECTOR {
+		panic(fmt.Sprintf("Could not call GetSequence for type %s", vec.Type.String()))
+	}
+	seq := &SequenceData{
+		Start: vec.Buff.GetValue(types.IDX_0).(int64),
+		Step:  vec.Buff.GetValue(types.IDX_1).(int64),
+	}
+	return seq
+}
+
+func (vec *Vector) Reset() {
+	vec.Buff.Reset()
+	vec.Validity.Reset()
 }
 
 func (vec *Vector) Flatten(count types.IDX_T) {

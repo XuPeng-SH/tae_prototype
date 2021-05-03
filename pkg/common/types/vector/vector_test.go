@@ -63,3 +63,21 @@ func TestNormality(t *testing.T) {
 	}
 	assert.Equal(t, const_vec.GetValue(count), float32(0))
 }
+
+func TestSequenceVector(t *testing.T) {
+	src := NewVector(WithInitByLogicType(types.LT_FLOAT32))
+	panic1 := func() {
+		src.GetSequence()
+	}
+	assert.Panics(t, panic1)
+	assert.Equal(t, src.GetType(), FLAT_VECTOR)
+	seq := SequenceData{
+		Start: 0,
+		Step:  1,
+	}
+	src.ToSeqenceVector(&seq)
+	t.Log(seq.String())
+	seq2 := src.GetSequence()
+	assert.Equal(t, seq.Start, seq2.Start)
+	assert.Equal(t, seq.Step, seq2.Step)
+}
