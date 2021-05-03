@@ -16,7 +16,6 @@ type IColumnSegment interface {
 }
 
 type ColumnSegment struct {
-	IColumnSegment
 	base.Segment
 	ColumnType types.LogicType
 	Type       ColumnSegmentType
