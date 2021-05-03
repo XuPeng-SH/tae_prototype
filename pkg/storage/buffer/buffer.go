@@ -50,6 +50,10 @@ func (buf *Buffer) WriteAt(w io.WriterAt, off int64) (n int, err error) {
 	return n, err
 }
 
+func (buf *Buffer) GetType() BufferType {
+	return buf.Type
+}
+
 func (buf *Buffer) Clear() {
 	hack.MemsetRepeatByte(buf.Data, byte(0))
 }

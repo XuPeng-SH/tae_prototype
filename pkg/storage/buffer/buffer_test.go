@@ -1,10 +1,12 @@
 package buffer
 
 import (
-	"github.com/stretchr/testify/assert"
 	"os"
+	"tae/pkg/common/types"
 	"tae/pkg/storage/layout"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestBuffer(t *testing.T) {
@@ -12,6 +14,7 @@ func TestBuffer(t *testing.T) {
 	for i := layout.BLOCK_HEAD_SIZE; i < layout.BLOCK_SECTOR_SIZE; i++ {
 		buf.(*Buffer).Data[i] = byte((i - layout.BLOCK_HEAD_SIZE) % 256)
 	}
+	assert.Equal(t, NA_BUFFER, buf.GetType())
 
 	path := "/tmp/tttttt"
 	w, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, 0666)
@@ -33,4 +36,12 @@ func TestBuffer(t *testing.T) {
 	assert.Equal(t, buf2.(*Buffer).Data[22], byte(0))
 	assert.Equal(t, buf2.(*Buffer).Data[23], byte(0))
 	assert.Equal(t, buf2.(*Buffer).Data[24], byte(0))
+}
+
+func TestBlock(t *testing.T) {
+	blk_id := types.IDX_T(999)
+	blk := NewBlockBuffer(blk_id)
+	assert.Equal(t, blk.Capacity(), int64(layout.BLOCK_ALLOC_SIZE))
+	assert.Equal(t, blk_id, blk.GetID())
+	assert.Equal(t, BLOCK_BUFFER, blk.GetType())
 }
