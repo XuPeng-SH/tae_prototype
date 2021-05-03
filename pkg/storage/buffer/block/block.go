@@ -1,31 +1,22 @@
-package buffer
+package block
 
 import (
 	"tae/pkg/common/types"
+	buf "tae/pkg/storage/buffer"
 	"tae/pkg/storage/layout"
 )
 
-type IBlockBuffer interface {
-	IBuffer
-	GetID() types.IDX_T
-}
-
-type BlockBuffer struct {
-	IBuffer
-	ID types.IDX_T
-}
-
 var (
-	_ IBuffer      = (*BlockBuffer)(nil)
+	_ buf.IBuffer  = (*BlockBuffer)(nil)
 	_ IBlockBuffer = (*BlockBuffer)(nil)
 )
 
 func NewBlockBuffer(id types.IDX_T) IBlockBuffer {
 	bb := &BlockBuffer{
-		IBuffer: NewBuffer(layout.BLOCK_ALLOC_SIZE),
+		IBuffer: buf.NewBuffer(layout.BLOCK_ALLOC_SIZE),
 		ID:      id,
 	}
-	bb.IBuffer.(*Buffer).Type = BLOCK_BUFFER
+	bb.IBuffer.(*buf.Buffer).Type = buf.BLOCK_BUFFER
 	return bb
 }
 

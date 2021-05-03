@@ -2,7 +2,6 @@ package buffer
 
 import (
 	"os"
-	"tae/pkg/common/types"
 	"tae/pkg/storage/layout"
 	"testing"
 
@@ -36,12 +35,4 @@ func TestBuffer(t *testing.T) {
 	assert.Equal(t, buf2.(*Buffer).Data[22], byte(0))
 	assert.Equal(t, buf2.(*Buffer).Data[23], byte(0))
 	assert.Equal(t, buf2.(*Buffer).Data[24], byte(0))
-}
-
-func TestBlock(t *testing.T) {
-	blk_id := types.IDX_T(999)
-	blk := NewBlockBuffer(blk_id)
-	assert.Equal(t, blk.Capacity(), int64(layout.BLOCK_ALLOC_SIZE))
-	assert.Equal(t, blk_id, blk.GetID())
-	assert.Equal(t, BLOCK_BUFFER, blk.GetType())
 }
