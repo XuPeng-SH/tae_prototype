@@ -6,6 +6,10 @@ import (
 	"tae/pkg/storage/layout"
 )
 
+var (
+	_ IBufferManager = (*BufferManager)(nil)
+)
+
 func NewBufferManager(capacity types.IDX_T) IBufferManager {
 	mgr := &BufferManager{
 		Capacity:    capacity,
@@ -18,6 +22,7 @@ func NewBufferManager(capacity types.IDX_T) IBufferManager {
 
 func (mgr *BufferManager) RegisterBlock(blk_id layout.BlockId) blk.IBlockHandle {
 	mgr.Lock()
+	defer mgr.Unlock()
 
 	handle, ok := mgr.Blocks[blk_id]
 	if ok {
@@ -39,5 +44,6 @@ func (mgr *BufferManager) UnregisterBlock(blk_id layout.BlockId) {
 		return
 	}
 	mgr.Lock()
+	defer mgr.Unlock()
 	delete(mgr.Blocks, blk_id)
 }

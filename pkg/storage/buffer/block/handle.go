@@ -29,6 +29,10 @@ func (h *BlockHandle) Unload() {
 	h.State = BLOCK_UNLOAD
 }
 
+func (h *BlockHandle) GetID() layout.BlockId {
+	return h.ID
+}
+
 func (h *BlockHandle) Close() error {
 	h.RTState = BLOCK_RT_CLOSED
 	return nil

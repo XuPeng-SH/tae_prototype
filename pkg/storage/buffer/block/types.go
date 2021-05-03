@@ -41,7 +41,7 @@ type BlockHandleCtx struct {
 type IBlockHandle interface {
 	sync.Locker
 	io.Closer
-	// GetID() layout.BlockId
+	GetID() layout.BlockId
 	// Unload()
 	// Loadable() bool
 	// GetBuff() buf.IBuffer
