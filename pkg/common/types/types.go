@@ -18,6 +18,9 @@ const (
 	SMIDX_1   = SMIDX_T(1)
 	SMIDX_2   = SMIDX_T(2)
 	SMIDX_MAX = ^SMIDX_0
+
+	UINT32_MAX = ^uint32(0)
+	INT32_MAX  = UINT32_MAX >> 1
 )
 
 func (idx IDX_T) String() string {

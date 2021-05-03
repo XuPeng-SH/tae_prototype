@@ -17,6 +17,7 @@ func NewBlockHandle(ctx *BlockHandleCtx) IBlockHandle {
 		Buff:     ctx.Buff,
 		Capacity: size,
 		State:    state,
+		RTState:  BLOCK_RT_RUNNING,
 	}
 	return handle
 }
@@ -26,4 +27,14 @@ func (h *BlockHandle) Unload() {
 		return
 	}
 	h.State = BLOCK_UNLOAD
+}
+
+func (h *BlockHandle) Close() error {
+	h.RTState = BLOCK_RT_CLOSED
+	return nil
+}
+
+// PXU TODO
+func (h *BlockHandle) IsClosed() bool {
+	return h.RTState == BLOCK_RT_CLOSED
 }

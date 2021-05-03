@@ -25,6 +25,12 @@ type BlockId struct {
 	Offset uint32
 }
 
+var (
+	INVALID_BLOCK_ID        = BlockId{Part: ^uint32(0), Offset: ^uint32(0)}
+	MIN_TRANSIENT_BLOCK_ID  = BlockId{Part: ^uint32(0) / 2, Offset: uint32(0)}
+	MAX_PERSISTENT_BLOCK_ID = BlockId{Part: MIN_TRANSIENT_BLOCK_ID.Part - 1, Offset: ^uint32(0)}
+)
+
 type MainHeader struct {
 	Version    types.IDX_T
 	Reservered [MAIN_HEADER_BYTES_RESERVERED]byte
