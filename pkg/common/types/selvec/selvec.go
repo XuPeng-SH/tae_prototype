@@ -66,7 +66,7 @@ func (sv *SelectionVector) Count() types.IDX_T {
 	return types.IDX_T(len(sv.Data.Data))
 }
 
-func (sv *SelectionVector) Slice(other SelectionVector, count types.IDX_T) *SelectionData {
+func (sv *SelectionVector) Slice(other ISelectionVector, count types.IDX_T) *SelectionData {
 	if count > other.Count() {
 		return nil
 	}

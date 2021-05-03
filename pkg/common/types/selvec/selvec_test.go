@@ -38,7 +38,7 @@ func TestAll(t *testing.T) {
 	sv2.SetIndex(3, 6)
 	t.Log(sv2.ToString(4))
 
-	data := sv.Slice(*sv2, 4)
+	data := sv.Slice(sv2, 4)
 	new_sv := SelectionVector{
 		Data: data,
 	}

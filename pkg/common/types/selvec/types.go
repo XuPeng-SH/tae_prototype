@@ -36,7 +36,7 @@ type ISelectionVector interface {
 	SetIndex(index types.IDX_T, loc EntryT)
 	GetIndex(index types.IDX_T) EntryT
 	Count() types.IDX_T
-	Slice(other SelectionVector, count types.IDX_T) *SelectionData
+	Slice(other ISelectionVector, count types.IDX_T) *SelectionData
 	Swap(i, j types.IDX_T)
 	String() string
 	ToString(count types.IDX_T) string
