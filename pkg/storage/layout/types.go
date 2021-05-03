@@ -6,14 +6,12 @@ import (
 )
 
 const (
-	BLOCK_INVALID = types.IDX_MAX
-	BLOCK_MAX     = types.IDX_MAX / 2
-)
-
-const (
-	MAIN_HEADER_MAGIC            = "BASE"
-	MAIN_HEADER_BYTES_MAGIC      = 4
-	MAIN_HEADER_BYTES_RESERVERED = 28
+	K                            types.IDX_T = 1024
+	M                            types.IDX_T = 1024 * K
+	G                            types.IDX_T = 1024 * M
+	MAIN_HEADER_MAGIC                        = "BASE"
+	MAIN_HEADER_BYTES_MAGIC                  = 4
+	MAIN_HEADER_BYTES_RESERVERED             = 28
 )
 
 func init() {
