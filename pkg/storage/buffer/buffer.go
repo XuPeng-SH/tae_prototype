@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"io"
 	"tae/pkg/common/types"
+	"tae/pkg/common/util/hack"
 	"tae/pkg/storage/layout"
 )
 
@@ -47,4 +48,12 @@ func (buf *Buffer) WriteAt(w io.WriterAt, off int64) (n int, err error) {
 	copy(buf.Data, buf.Hasher.Sum(nil))
 	n, err = w.WriteAt(buf.Data, off)
 	return n, err
+}
+
+func (buf *Buffer) Clear() {
+	hack.MemsetRepeatByte(buf.Data, byte(0))
+}
+
+func (buf *Buffer) Capacity() int64 {
+	return int64(buf.DataSize + buf.HeaderSize)
 }

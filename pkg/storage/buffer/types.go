@@ -11,8 +11,8 @@ type CheckSumT uint64
 type IBuffer interface {
 	ReadAt(r io.ReaderAt, off int64) (n int, err error)
 	WriteAt(w io.WriterAt, off int64) (n int, err error)
-	// Clear()
-	// Capacity() types.IDX_T
+	Clear()
+	Capacity() int64
 }
 
 type Buffer struct {

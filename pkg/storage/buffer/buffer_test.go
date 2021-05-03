@@ -27,4 +27,10 @@ func TestBuffer(t *testing.T) {
 	assert.Equal(t, err, nil)
 	r.Close()
 	// t.Log(buf2.Data)
+
+	assert.Equal(t, buf.Capacity(), int64(layout.BLOCK_SECTOR_SIZE))
+	buf2.Clear()
+	assert.Equal(t, buf2.(*Buffer).Data[22], byte(0))
+	assert.Equal(t, buf2.(*Buffer).Data[23], byte(0))
+	assert.Equal(t, buf2.(*Buffer).Data[24], byte(0))
 }
