@@ -14,8 +14,9 @@ var (
 )
 
 func NewBufferManager(capacity types.IDX_T) mgrif.IBufferManager {
+
 	mgr := &BufferManager{
-		Capacity:    capacity,
+		Pool:        NewSimpleMemoryPool(capacity),
 		TransientID: layout.MIN_TRANSIENT_BLOCK_ID,
 		Blocks:      make(map[layout.BlockId]blkif.IBlockHandle),
 	}
@@ -43,11 +44,11 @@ func (mgr *BufferManager) RegisterBlock(blk_id layout.BlockId) blkif.IBlockHandl
 }
 
 func (mgr *BufferManager) GetUsageSize() types.IDX_T {
-	return types.AtomicLoad(&(mgr.UsageSize))
+	return mgr.Pool.GetUsageSize()
 }
 
 func (mgr *BufferManager) GetCapacity() types.IDX_T {
-	return types.AtomicLoad(&(mgr.Capacity))
+	return mgr.Pool.GetCapacity()
 }
 
 func (mgr *BufferManager) SetCapacity(capacity types.IDX_T) {
@@ -56,7 +57,8 @@ func (mgr *BufferManager) SetCapacity(capacity types.IDX_T) {
 	if !mgr.makeSpace(0, capacity) {
 		panic(fmt.Sprintf("Cannot makeSpace(%d,%d)", 0, capacity))
 	}
-	types.AtomicStore(&(mgr.Capacity), capacity)
+	// types.AtomicStore(&(mgr.Capacity), capacity)
+	mgr.Pool.SetCapacity(capacity)
 }
 
 func (mgr *BufferManager) UnregisterBlock(blk_id layout.BlockId, can_destroy bool) {
