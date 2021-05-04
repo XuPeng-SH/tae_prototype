@@ -34,7 +34,8 @@ func (mgr *BufferManager) RegisterBlock(blk_id layout.BlockId) blkif.IBlockHandl
 		}
 	}
 	ctx := blk.BlockHandleCtx{
-		ID: blk_id,
+		ID:      blk_id,
+		Manager: mgr,
 	}
 	handle = blk.NewBlockHandle(&ctx)
 	mgr.Blocks[blk_id] = handle
@@ -73,16 +74,27 @@ func (mgr *BufferManager) makeSpace(free_size, upper_limit types.IDX_T) bool {
 	return true
 }
 
+func (mgr *BufferManager) Unpin(handle blkif.IBlockHandle) {
+	mgr.Lock()
+	if !handle.UnRef() {
+		panic("logic error")
+	}
+	if !handle.HasRef() {
+		// Mark handle as stale
+		// Temp to delete the handle from map
+		// FIXME
+		delete(mgr.Blocks, handle.GetID())
+	}
+}
+
 func (mgr *BufferManager) Pin(handle blkif.IBlockHandle) blkif.IBufferHandle {
 	handle.Lock()
 	defer handle.Unlock()
-	if handle.GetState() == blkif.BLOCK_LOADED {
-		// PXU TODO
-		return nil
+	if handle.GetState() != blkif.BLOCK_LOADED {
+		if mgr.makeSpace(handle.GetCapacity(), mgr.GetCapacity()) {
+			panic(fmt.Sprintf("Cannot makeSpace(%d,%d)", handle.GetCapacity(), mgr.GetCapacity()))
+		}
+		handle.Ref()
 	}
-	if mgr.makeSpace(handle.GetCapacity(), mgr.GetCapacity()) {
-		panic(fmt.Sprintf("Cannot makeSpace(%d,%d)", handle.GetCapacity(), mgr.GetCapacity()))
-	}
-	handle.Ref()
-	return nil
+	return handle.Load()
 }

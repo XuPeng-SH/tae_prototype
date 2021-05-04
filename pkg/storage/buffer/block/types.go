@@ -18,6 +18,7 @@ type BlockHandleCtx struct {
 	ID          layout.BlockId
 	Buff        buf.IBuffer
 	Destroyable bool
+	Manager     mgrif.IBufferManager
 }
 
 type BlockHandle struct {
@@ -29,8 +30,12 @@ type BlockHandle struct {
 	Capacity    types.IDX_T
 	RTState     blkif.BlockRTState
 	Refs        types.IDX_T
+	Manager     mgrif.IBufferManager
 }
 
+// BufferHandle is created from IBufferManager::Pin, which will set the IBlockHandle reference to 1
+// The following IBufferManager::Pin will call IBlockHandle::Ref to increment the reference count
+// BufferHandle should alway be closed manually when it is not needed, which will call IBufferManager::Unpin
 type BufferHandle struct {
 	Handle  blkif.IBlockHandle
 	Manager mgrif.IBufferManager

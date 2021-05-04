@@ -41,7 +41,9 @@ type IBlockHandle interface {
 	// IsDestroyable() bool
 	IsClosed() bool
 	Ref()
-	UnRef()
+	// If the current Refs is already 0, it returns false, else true
+	UnRef() bool
+	// If the current Refs is not 0, it returns true, else false
 	HasRef() bool
 }
 

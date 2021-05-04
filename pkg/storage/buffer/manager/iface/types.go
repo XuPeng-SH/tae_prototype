@@ -1,9 +1,9 @@
-package iface
+package blkif
 
 import (
 	"sync"
 	"tae/pkg/common/types"
-	"tae/pkg/storage/buffer/block/iface"
+	blkif "tae/pkg/storage/buffer/block/iface"
 	"tae/pkg/storage/layout"
 )
 
@@ -14,12 +14,12 @@ type IBufferManager interface {
 	GetCapacity() types.IDX_T
 	SetCapacity(c types.IDX_T)
 
-	RegisterBlock(blk_id layout.BlockId) iface.IBlockHandle
+	RegisterBlock(blk_id layout.BlockId) blkif.IBlockHandle
 	UnregisterBlock(blk_id layout.BlockId, can_destroy bool)
 
 	// RegisterMemory(blk_id layout.BlockId, can_destroy bool) blk.IBlockHandle
 	// // Allocate(size types.IDX_T) buf.IBufferH
 
-	Pin(h iface.IBlockHandle) iface.IBufferHandle
-	// Unpin(h blk.IBlockHandle)
+	Pin(h blkif.IBlockHandle) blkif.IBufferHandle
+	Unpin(h blkif.IBlockHandle)
 }
