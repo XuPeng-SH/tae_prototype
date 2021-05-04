@@ -4,24 +4,26 @@ import (
 	"fmt"
 	"tae/pkg/common/types"
 	blk "tae/pkg/storage/buffer/block"
+	blkif "tae/pkg/storage/buffer/block/iface"
+	mgrif "tae/pkg/storage/buffer/manager/iface"
 	"tae/pkg/storage/layout"
 )
 
 var (
-	_ IBufferManager = (*BufferManager)(nil)
+	_ mgrif.IBufferManager = (*BufferManager)(nil)
 )
 
-func NewBufferManager(capacity types.IDX_T) IBufferManager {
+func NewBufferManager(capacity types.IDX_T) mgrif.IBufferManager {
 	mgr := &BufferManager{
 		Capacity:    capacity,
 		TransientID: layout.MIN_TRANSIENT_BLOCK_ID,
-		Blocks:      make(map[layout.BlockId]blk.IBlockHandle),
+		Blocks:      make(map[layout.BlockId]blkif.IBlockHandle),
 	}
 
 	return mgr
 }
 
-func (mgr *BufferManager) RegisterBlock(blk_id layout.BlockId) blk.IBlockHandle {
+func (mgr *BufferManager) RegisterBlock(blk_id layout.BlockId) blkif.IBlockHandle {
 	mgr.Lock()
 	defer mgr.Unlock()
 
@@ -71,10 +73,10 @@ func (mgr *BufferManager) makeSpace(free_size, upper_limit types.IDX_T) bool {
 	return true
 }
 
-func (mgr *BufferManager) Pin(handle blk.IBlockHandle) blk.IBufferHandle {
+func (mgr *BufferManager) Pin(handle blkif.IBlockHandle) blkif.IBufferHandle {
 	handle.Lock()
 	defer handle.Unlock()
-	if handle.GetState() == blk.BLOCK_LOADED {
+	if handle.GetState() == blkif.BLOCK_LOADED {
 		// PXU TODO
 		return nil
 	}

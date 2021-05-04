@@ -2,15 +2,16 @@ package block
 
 import (
 	buf "tae/pkg/storage/buffer"
+	"tae/pkg/storage/buffer/block/iface"
 	"tae/pkg/storage/layout"
 )
 
 var (
-	_ buf.IBuffer  = (*BlockBuffer)(nil)
-	_ IBlockBuffer = (*BlockBuffer)(nil)
+	_ buf.IBuffer        = (*BlockBuffer)(nil)
+	_ iface.IBlockBuffer = (*BlockBuffer)(nil)
 )
 
-func NewBlockBuffer(id layout.BlockId) IBlockBuffer {
+func NewBlockBuffer(id layout.BlockId) iface.IBlockBuffer {
 	bb := &BlockBuffer{
 		IBuffer: buf.NewBuffer(layout.BLOCK_ALLOC_SIZE),
 		ID:      id,

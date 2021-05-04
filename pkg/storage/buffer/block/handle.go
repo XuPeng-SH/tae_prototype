@@ -2,31 +2,32 @@ package block
 
 import (
 	"tae/pkg/common/types"
+	"tae/pkg/storage/buffer/block/iface"
 	"tae/pkg/storage/layout"
 )
 
-func NewBlockHandle(ctx *BlockHandleCtx) IBlockHandle {
+func NewBlockHandle(ctx *BlockHandleCtx) iface.IBlockHandle {
 	size := layout.BLOCK_ALLOC_SIZE
-	state := BLOCK_UNLOAD
+	state := iface.BLOCK_UNLOAD
 	if ctx.Buff != nil {
 		size = types.IDX_T(ctx.Buff.Capacity())
-		state = BLOCK_UNLOAD
+		state = iface.BLOCK_UNLOAD
 	}
 	handle := &BlockHandle{
 		ID:       ctx.ID,
 		Buff:     ctx.Buff,
 		Capacity: size,
 		State:    state,
-		RTState:  BLOCK_RT_RUNNING,
+		RTState:  iface.BLOCK_RT_RUNNING,
 	}
 	return handle
 }
 
 func (h *BlockHandle) Unload() {
-	if h.State == BLOCK_UNLOAD {
+	if h.State == iface.BLOCK_UNLOAD {
 		return
 	}
-	h.State = BLOCK_UNLOAD
+	h.State = iface.BLOCK_UNLOAD
 }
 
 func (h *BlockHandle) GetCapacity() types.IDX_T {
@@ -54,16 +55,24 @@ func (h *BlockHandle) GetID() layout.BlockId {
 	return h.ID
 }
 
-func (h *BlockHandle) GetState() BlockState {
+func (h *BlockHandle) GetState() iface.BlockState {
 	return h.State
 }
 
 func (h *BlockHandle) Close() error {
-	h.RTState = BLOCK_RT_CLOSED
+	h.RTState = iface.BLOCK_RT_CLOSED
 	return nil
 }
 
 // PXU TODO
 func (h *BlockHandle) IsClosed() bool {
-	return h.RTState == BLOCK_RT_CLOSED
+	return h.RTState == iface.BLOCK_RT_CLOSED
+}
+
+func (h *BlockHandle) Load() iface.IBufferHandle {
+	if h.State == iface.BLOCK_LOADED {
+		return nil
+	}
+	// TODO
+	return nil
 }
