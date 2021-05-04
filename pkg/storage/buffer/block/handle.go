@@ -65,9 +65,10 @@ func (h *BlockHandle) GetState() blkif.BlockState {
 }
 
 func (h *BlockHandle) Close() error {
-	defer func() {
-		blkif.AtomicStoreRTState(&(h.RTState), blkif.BLOCK_RT_CLOSED)
-	}()
+	if !blkif.AtomicCASRTState(&(h.RTState), blkif.BLOCK_RT_RUNNING, blkif.BLOCK_RT_CLOSED) {
+		// Cocurrent senario that other client already call Close before
+		return nil
+	}
 	h.Manager.UnregisterBlock(h.ID, h.Destroyable)
 	return nil
 }
