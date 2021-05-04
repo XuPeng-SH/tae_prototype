@@ -29,8 +29,29 @@ func (h *BlockHandle) Unload() {
 	h.State = BLOCK_UNLOAD
 }
 
+func (h *BlockHandle) Ref() {
+	types.AtomicAdd(&(h.Refs), 1)
+}
+
+func (h *BlockHandle) UnRef() {
+	old := types.AtomicLoad(&(h.Refs))
+	if old == types.IDX_0 {
+		return
+	}
+	types.AtomicCAS(&(h.Refs), old, old-1)
+}
+
+func (h *BlockHandle) HasRef() bool {
+	v := types.AtomicLoad(&(h.Refs))
+	return v > types.IDX_0
+}
+
 func (h *BlockHandle) GetID() layout.BlockId {
 	return h.ID
+}
+
+func (h *BlockHandle) GetState() BlockState {
+	return h.State
 }
 
 func (h *BlockHandle) Close() error {

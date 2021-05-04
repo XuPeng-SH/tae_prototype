@@ -47,3 +47,13 @@ func (mgr *BufferManager) UnregisterBlock(blk_id layout.BlockId, can_destroy boo
 	defer mgr.Unlock()
 	delete(mgr.Blocks, blk_id)
 }
+
+func (mgr *BufferManager) Pin(handle blk.IBlockHandle) blk.IBufferHandle {
+	handle.Lock()
+	defer handle.Unlock()
+	if handle.GetState() == blk.BLOCK_LOADED {
+		// PXU TODO
+		return nil
+	}
+	return nil
+}

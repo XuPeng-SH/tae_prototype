@@ -220,8 +220,8 @@ func (vb *VectorBuffer) ToString(opts ...interface{}) string {
 			count = cnt
 		}
 	}
-	ret := "Vbuff(" + vb.Type.String() + "," + vb.ItemType.String() + "): [" + count.String()
-	ret += "/" + vb.MaxItems().String() + "] = ["
+	ret := "Vbuff(" + vb.Type.String() + "," + vb.ItemType.String() + "): [" + types.IDXtoa(count)
+	ret += "/" + types.IDXtoa(vb.MaxItems()) + "] = ["
 	for i := types.IDX_0; i < count; i++ {
 		ret += fmt.Sprintf("%v", vb.GetValue(i))
 		if i != count-1 {

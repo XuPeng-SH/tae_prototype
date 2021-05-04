@@ -45,10 +45,13 @@ type IBlockHandle interface {
 	// Unload()
 	// Loadable() bool
 	// GetBuff() buf.IBuffer
-	// GetState() BlockState
+	GetState() BlockState
 	// Size() types.IDX_T
 	// IsDestroyable() bool
 	IsClosed() bool
+	Ref()
+	UnRef()
+	HasRef() bool
 }
 
 type BlockHandle struct {
@@ -59,6 +62,7 @@ type BlockHandle struct {
 	Destroyable bool
 	Capacity    types.IDX_T
 	RTState     BlockRTState
+	Refs        types.IDX_T
 }
 
 type IBufferHandle interface {

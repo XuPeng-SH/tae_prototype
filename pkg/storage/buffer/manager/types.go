@@ -4,7 +4,6 @@ import (
 	// "sync/atomic"
 	"sync"
 	"tae/pkg/common/types"
-	// buf "tae/pkg/storage/buffer"
 	blk "tae/pkg/storage/buffer/block"
 	"tae/pkg/storage/layout"
 )
@@ -22,7 +21,7 @@ type IBufferManager interface {
 	// RegisterMemory(blk_id layout.BlockId, can_destroy bool) blk.IBlockHandle
 	// // Allocate(size types.IDX_T) buf.IBufferH
 
-	// Pin(h blk.IBlockHandle) buf.IBuffer
+	Pin(h blk.IBlockHandle) blk.IBufferHandle
 	// Unpin(h blk.IBlockHandle)
 }
 

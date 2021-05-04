@@ -2,11 +2,12 @@ package types
 
 import (
 	"fmt"
+	"sync/atomic"
 	"unsafe"
 )
 
-type IDX_T uint64
-type SMIDX_T uint16
+type IDX_T = uint64
+type SMIDX_T = uint16
 type PhysicalType uint8
 
 const (
@@ -23,8 +24,24 @@ const (
 	INT32_MAX  = UINT32_MAX >> 1
 )
 
-func (idx IDX_T) String() string {
+func IDXtoa(idx IDX_T) string {
 	return fmt.Sprintf("%d", idx)
+}
+
+func AtomicLoad(addr *IDX_T) IDX_T {
+	return atomic.LoadUint64(addr)
+}
+
+func AtomicStore(addr *IDX_T, val IDX_T) {
+	atomic.StoreUint64(addr, val)
+}
+
+func AtomicAdd(addr *IDX_T, delta int64) IDX_T {
+	return atomic.AddUint64(addr, ^uint64(-delta-1))
+}
+
+func AtomicCAS(addr *IDX_T, old, new IDX_T) bool {
+	return atomic.CompareAndSwapUint64(addr, old, new)
 }
 
 const (
