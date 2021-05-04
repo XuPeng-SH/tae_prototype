@@ -49,4 +49,5 @@ type IBlockHandle interface {
 
 type IBufferHandle interface {
 	io.Closer
+	GetID() layout.BlockId
 }

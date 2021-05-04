@@ -8,6 +8,9 @@ import (
 )
 
 func NewBlockHandle(ctx *BlockHandleCtx) blkif.IBlockHandle {
+	// if ctx.ID == nil {
+	// 	panic(fmt.Sprintf("Block id should be specified"))
+	// }
 	size := layout.BLOCK_ALLOC_SIZE
 	state := blkif.BLOCK_UNLOAD
 	if ctx.Buff != nil {
@@ -66,8 +69,8 @@ func (h *BlockHandle) Close() error {
 	return nil
 }
 
-// PXU TODO
 func (h *BlockHandle) IsClosed() bool {
+	// TODO
 	return h.RTState == blkif.BLOCK_RT_CLOSED
 }
 
@@ -75,8 +78,10 @@ func (h *BlockHandle) Load() blkif.IBufferHandle {
 	if h.State == blkif.BLOCK_LOADED {
 		return NewBufferHandle(h, h.Manager)
 	}
+
 	// TODO
-	return nil
+	h.State = blkif.BLOCK_LOADED
+	return NewBufferHandle(h, h.Manager)
 }
 
 func NewBufferHandle(blk blkif.IBlockHandle, mgr mgrif.IBufferManager) blkif.IBufferHandle {
@@ -85,6 +90,10 @@ func NewBufferHandle(blk blkif.IBlockHandle, mgr mgrif.IBufferManager) blkif.IBu
 		Manager: mgr,
 	}
 	return h
+}
+
+func (h *BufferHandle) GetID() layout.BlockId {
+	return h.Handle.GetID()
 }
 
 func (h *BufferHandle) Close() error {

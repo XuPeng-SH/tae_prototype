@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestManager(t *testing.T) {
+func TestManagerBasic(t *testing.T) {
 	mgr := NewBufferManager(types.IDX_T(1))
 	blk_0 := layout.BlockId{Part: uint32(0), Offset: uint32(0)}
 	blk_1 := layout.BlockId{Part: uint32(0), Offset: uint32(1)}
@@ -40,4 +40,41 @@ func TestManager(t *testing.T) {
 	assert.Equal(t, len(mgr.(*BufferManager).Blocks), 3)
 	mgr.UnregisterBlock(blk_0, true)
 	assert.Equal(t, len(mgr.(*BufferManager).Blocks), 2)
+}
+
+func TestManager2(t *testing.T) {
+	mgr := NewBufferManager(types.IDX_T(1024))
+
+	blk_0_0 := layout.NewBlockId(0, 0)
+	h_0_0 := mgr.RegisterBlock(*blk_0_0)
+	assert.Equal(t, h_0_0.GetID(), *blk_0_0)
+	assert.False(t, h_0_0.HasRef())
+	panic1 := func() {
+		mgr.Pin(h_0_0)
+	}
+	assert.Panics(t, panic1)
+	new_cap := h_0_0.GetCapacity() * 2
+	mgr.SetCapacity(new_cap)
+	assert.Equal(t, mgr.GetCapacity(), new_cap)
+
+	assert.Equal(t, len(mgr.(*BufferManager).Blocks), 1)
+	assert.False(t, h_0_0.HasRef())
+
+	b_0_0 := mgr.Pin(h_0_0)
+	assert.Equal(t, b_0_0.GetID(), *blk_0_0)
+	assert.True(t, h_0_0.HasRef())
+	b_0_0.Close()
+	assert.False(t, h_0_0.HasRef())
+	b_0_0_0 := mgr.Pin(h_0_0)
+	assert.True(t, h_0_0.HasRef())
+	b_0_0_1 := mgr.Pin(h_0_0)
+	assert.True(t, h_0_0.HasRef())
+	b_0_0_2 := mgr.Pin(h_0_0)
+	assert.True(t, h_0_0.HasRef())
+	b_0_0_0.Close()
+	assert.True(t, h_0_0.HasRef())
+	b_0_0_2.Close()
+	assert.True(t, h_0_0.HasRef())
+	b_0_0_1.Close()
+	assert.False(t, h_0_0.HasRef())
 }

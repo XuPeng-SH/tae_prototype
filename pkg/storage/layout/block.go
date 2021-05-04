@@ -13,6 +13,14 @@ var (
 	BLOCK_CHECKSUM_SIZE             = BLOCK_HEAD_SIZE
 )
 
+func NewBlockId(part, offset uint32) *BlockId {
+	blk_id := &BlockId{
+		Part:   part,
+		Offset: offset,
+	}
+	return blk_id
+}
+
 func (bid BlockId) IsTransientBlock() bool {
 	return bid.Part >= MIN_TRANSIENT_BLOCK_ID.Part
 }
