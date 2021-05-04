@@ -31,15 +31,15 @@ func TestManagerBasic(t *testing.T) {
 	h1.Close()
 	assert.True(t, h1.IsClosed())
 	mgr_h1, ok := mgr.(*BufferManager).Blocks[blk_1]
-	assert.True(t, ok)
-	assert.True(t, mgr_h1.IsClosed())
+	assert.False(t, ok)
+	assert.Equal(t, mgr_h1, nil)
 	mgr_h2, ok := mgr.(*BufferManager).Blocks[blk_2]
 	assert.True(t, ok)
 	assert.False(t, mgr_h2.IsClosed())
 
-	assert.Equal(t, len(mgr.(*BufferManager).Blocks), 3)
-	mgr.UnregisterBlock(blk_0, true)
 	assert.Equal(t, len(mgr.(*BufferManager).Blocks), 2)
+	mgr.UnregisterBlock(blk_0, true)
+	assert.Equal(t, len(mgr.(*BufferManager).Blocks), 1)
 }
 
 func TestManager2(t *testing.T) {

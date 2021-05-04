@@ -3,24 +3,37 @@ package iface
 import (
 	"io"
 	"sync"
+	"sync/atomic"
 	"tae/pkg/common/types"
 	buf "tae/pkg/storage/buffer"
 	"tae/pkg/storage/layout"
 )
 
-type BlockState uint8
+type BlockState = uint8
 
 const (
 	BLOCK_LOADED BlockState = iota
 	BLOCK_UNLOAD
 )
 
-type BlockRTState uint8
+type BlockRTState = uint32
 
 const (
 	BLOCK_RT_RUNNING BlockRTState = iota
 	BLOCK_RT_CLOSED
 )
+
+func AtomicLoadRTState(addr *BlockRTState) BlockRTState {
+	return atomic.LoadUint32(addr)
+}
+
+func AtomicStoreRTState(addr *BlockRTState, val BlockRTState) {
+	atomic.StoreUint32(addr, val)
+}
+
+func AtomicCASRTState(addr *BlockRTState, old, new BlockRTState) bool {
+	return atomic.CompareAndSwapUint32(addr, old, new)
+}
 
 type IBlockBuffer interface {
 	buf.IBuffer

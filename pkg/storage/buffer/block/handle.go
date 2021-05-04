@@ -65,13 +65,16 @@ func (h *BlockHandle) GetState() blkif.BlockState {
 }
 
 func (h *BlockHandle) Close() error {
-	h.RTState = blkif.BLOCK_RT_CLOSED
+	defer func() {
+		blkif.AtomicStoreRTState(&(h.RTState), blkif.BLOCK_RT_CLOSED)
+	}()
+	h.Manager.UnregisterBlock(h.ID, h.Destroyable)
 	return nil
 }
 
 func (h *BlockHandle) IsClosed() bool {
-	// TODO
-	return h.RTState == blkif.BLOCK_RT_CLOSED
+	state := blkif.AtomicLoadRTState(&(h.RTState))
+	return state == blkif.BLOCK_RT_CLOSED
 }
 
 func (h *BlockHandle) Load() blkif.IBufferHandle {
