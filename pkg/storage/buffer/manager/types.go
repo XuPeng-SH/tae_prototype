@@ -11,9 +11,9 @@ import (
 type IBufferManager interface {
 	sync.Locker
 
-	// GetSize() types.IDX_T
-	// GetCapacity() types.IDX_T
-	// SetCapacity(c types.IDX_T)
+	GetUsageSize() types.IDX_T
+	GetCapacity() types.IDX_T
+	SetCapacity(c types.IDX_T)
 
 	RegisterBlock(blk_id layout.BlockId) blk.IBlockHandle
 	UnregisterBlock(blk_id layout.BlockId, can_destroy bool)
@@ -27,7 +27,7 @@ type IBufferManager interface {
 
 type BufferManager struct {
 	sync.Mutex
-	Size        types.IDX_T
+	UsageSize   types.IDX_T
 	Capacity    types.IDX_T
 	Blocks      map[layout.BlockId]blk.IBlockHandle // Manager is not responsible to Close handle
 	TransientID layout.BlockId

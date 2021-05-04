@@ -29,6 +29,10 @@ func (h *BlockHandle) Unload() {
 	h.State = BLOCK_UNLOAD
 }
 
+func (h *BlockHandle) GetCapacity() types.IDX_T {
+	return h.Capacity
+}
+
 func (h *BlockHandle) Ref() {
 	types.AtomicAdd(&(h.Refs), 1)
 }

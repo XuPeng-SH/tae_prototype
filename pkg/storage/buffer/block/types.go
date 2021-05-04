@@ -46,6 +46,7 @@ type IBlockHandle interface {
 	// Loadable() bool
 	// GetBuff() buf.IBuffer
 	GetState() BlockState
+	GetCapacity() types.IDX_T
 	// Size() types.IDX_T
 	// IsDestroyable() bool
 	IsClosed() bool
