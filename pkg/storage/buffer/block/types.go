@@ -10,12 +10,12 @@ import (
 
 type IBlockBuffer interface {
 	buf.IBuffer
-	GetID() types.IDX_T
+	GetID() layout.BlockId
 }
 
 type BlockBuffer struct {
 	buf.IBuffer
-	ID types.IDX_T
+	ID layout.BlockId
 }
 
 type BlockState uint8

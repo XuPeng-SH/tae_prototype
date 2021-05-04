@@ -4,13 +4,12 @@ import (
 	"github.com/stretchr/testify/assert"
 	"tae/pkg/common/types"
 	buf "tae/pkg/storage/buffer"
-	// blk "tae/pkg/storage/buffer/block"
 	"tae/pkg/storage/layout"
 	"testing"
 )
 
 func TestBlock(t *testing.T) {
-	blk_id := types.IDX_T(999)
+	blk_id := layout.BlockId{Part: uint32(0), Offset: uint32(0)}
 	blk := NewBlockBuffer(blk_id)
 	assert.Equal(t, blk.Capacity(), int64(layout.BLOCK_ALLOC_SIZE))
 	assert.Equal(t, blk_id, blk.GetID())

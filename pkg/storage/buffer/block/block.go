@@ -1,7 +1,6 @@
 package block
 
 import (
-	"tae/pkg/common/types"
 	buf "tae/pkg/storage/buffer"
 	"tae/pkg/storage/layout"
 )
@@ -11,7 +10,7 @@ var (
 	_ IBlockBuffer = (*BlockBuffer)(nil)
 )
 
-func NewBlockBuffer(id types.IDX_T) IBlockBuffer {
+func NewBlockBuffer(id layout.BlockId) IBlockBuffer {
 	bb := &BlockBuffer{
 		IBuffer: buf.NewBuffer(layout.BLOCK_ALLOC_SIZE),
 		ID:      id,
@@ -20,6 +19,6 @@ func NewBlockBuffer(id types.IDX_T) IBlockBuffer {
 	return bb
 }
 
-func (bb *BlockBuffer) GetID() types.IDX_T {
+func (bb *BlockBuffer) GetID() layout.BlockId {
 	return bb.ID
 }
