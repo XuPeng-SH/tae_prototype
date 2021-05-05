@@ -29,13 +29,15 @@ func (pool *SimpleMemoryPool) Get(size types.IDX_T) (node *PoolNode) {
 	currsize := types.AtomicLoad(&(pool.UsageSize))
 	postsize := size + currsize
 	if postsize > capacity {
-		return &PoolNode{Data: []byte{}, Pool: pool}
+		return nil
+		// return &PoolNode{Data: []byte{}, Pool: pool}
 	}
 	for !types.AtomicCAS(&(pool.UsageSize), currsize, postsize) {
 		currsize = types.AtomicLoad(&(pool.UsageSize))
 		postsize += currsize + size
 		if postsize > capacity {
-			return &PoolNode{Data: []byte{}, Pool: pool}
+			return nil
+			// return &PoolNode{Data: []byte{}, Pool: pool}
 		}
 	}
 	buf := make([]byte, size)
@@ -48,7 +50,7 @@ func (pool *SimpleMemoryPool) Put(node *PoolNode) {
 	if size == 0 {
 		return
 	}
-	usagesize := types.AtomicAdd(&(pool.UsageSize), int64(size))
+	usagesize := types.AtomicAdd(&(pool.UsageSize), -1*int64(size))
 	if usagesize > pool.Capacity {
 		panic("")
 	}

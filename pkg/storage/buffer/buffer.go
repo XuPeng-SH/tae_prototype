@@ -3,6 +3,7 @@ package buffer
 import (
 	"bytes"
 	"crypto/sha256"
+	log "github.com/sirupsen/logrus"
 	"io"
 	"tae/pkg/common/types"
 	"tae/pkg/common/util/hack"
@@ -18,6 +19,9 @@ func NewBuffer(bufsize types.IDX_T, pool IMemoryPool) IBuffer {
 		bufsize += layout.BLOCK_SECTOR_SIZE - (bufsize % layout.BLOCK_SECTOR_SIZE)
 	}
 	node := pool.Get(bufsize)
+	if node == nil {
+		return nil
+	}
 	buf := &Buffer{
 		Node:       node,
 		HeaderSize: layout.BLOCK_HEAD_SIZE,
@@ -29,6 +33,7 @@ func NewBuffer(bufsize types.IDX_T, pool IMemoryPool) IBuffer {
 
 func (buf *Buffer) ReadAt(r io.ReaderAt, off int64) (n int, err error) {
 	if n, err = r.ReadAt(buf.Node.Data, off); err != nil {
+		log.Error(err.Error())
 		return n, err
 	}
 	buf.Hasher.Reset()
@@ -65,5 +70,8 @@ func (buf *Buffer) Clear() {
 }
 
 func (buf *Buffer) Capacity() int64 {
+	if buf.Node == nil || buf.Node.Data == nil {
+		return 0
+	}
 	return int64(buf.DataSize + buf.HeaderSize)
 }

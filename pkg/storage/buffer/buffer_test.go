@@ -2,6 +2,7 @@ package buffer
 
 import (
 	"os"
+	"tae/pkg/common/types"
 	"tae/pkg/storage/layout"
 	"testing"
 
@@ -36,4 +37,19 @@ func TestBuffer(t *testing.T) {
 	assert.Equal(t, buf2.(*Buffer).Node.Data[22], byte(0))
 	assert.Equal(t, buf2.(*Buffer).Node.Data[23], byte(0))
 	assert.Equal(t, buf2.(*Buffer).Node.Data[24], byte(0))
+}
+
+func TestBufferPool(t *testing.T) {
+	pool_size := layout.BLOCK_ALLOC_SIZE
+	pool := NewSimpleMemoryPool(pool_size)
+	buf := NewBuffer(100, pool)
+	buf_cap := types.IDX_T(buf.Capacity())
+	assert.Equal(t, pool.GetUsageSize(), buf_cap)
+	t.Log(pool.GetUsageSize())
+	t.Log(pool.GetCapacity())
+	buf.Close()
+	t.Log(pool.GetUsageSize())
+	t.Log(pool.GetCapacity())
+	assert.Equal(t, pool.GetUsageSize(), types.IDX_0)
+	assert.Equal(t, buf.Capacity(), int64(0))
 }
