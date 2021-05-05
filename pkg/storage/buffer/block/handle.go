@@ -2,15 +2,13 @@ package block
 
 import (
 	"tae/pkg/common/types"
+	buf "tae/pkg/storage/buffer"
 	blkif "tae/pkg/storage/buffer/block/iface"
 	mgrif "tae/pkg/storage/buffer/manager/iface"
 	"tae/pkg/storage/layout"
 )
 
 func NewBlockHandle(ctx *BlockHandleCtx) blkif.IBlockHandle {
-	// if ctx.ID == nil {
-	// 	panic(fmt.Sprintf("Block id should be specified"))
-	// }
 	size := layout.BLOCK_ALLOC_SIZE
 	state := blkif.BLOCK_UNLOAD
 	if ctx.Buff != nil {
@@ -26,6 +24,18 @@ func NewBlockHandle(ctx *BlockHandleCtx) blkif.IBlockHandle {
 		Manager:  ctx.Manager,
 	}
 	return handle
+}
+
+func (h *BlockHandle) setBuffer(buffer buf.IBuffer) error {
+	if h.State == blkif.BLOCK_LOADED {
+		return types.ErrLogicError
+	}
+	if buffer != nil && types.IDX_T(buffer.Capacity()) > h.GetCapacity() {
+		return types.ErrCapacityOverflow
+	}
+
+	h.Buff = buffer
+	return nil
 }
 
 func (h *BlockHandle) Unload() {
@@ -79,12 +89,12 @@ func (h *BlockHandle) IsClosed() bool {
 }
 
 func (h *BlockHandle) Load() blkif.IBufferHandle {
-	if h.State == blkif.BLOCK_LOADED {
+	if !blkif.AtomicCASState(&(h.State), blkif.BLOCK_UNLOAD, blkif.BLOCK_LOADED) {
 		return NewBufferHandle(h, h.Manager)
 	}
-
-	// TODO
 	h.State = blkif.BLOCK_LOADED
+	// h.setBuffer()
+	// TODO
 	return NewBufferHandle(h, h.Manager)
 }
 

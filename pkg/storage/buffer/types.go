@@ -33,9 +33,27 @@ type IBuffer interface {
 }
 
 type Buffer struct {
-	Data       []byte
+	Node       *PoolNode
 	DataSize   types.IDX_T
 	HeaderSize types.IDX_T
 	Hasher     hash.Hash
 	Type       BufferType
+}
+
+type PoolNode struct {
+	Data []byte
+	Pool IMemoryPool
+}
+
+type IMemoryPool interface {
+	Get(size types.IDX_T) (node *PoolNode)
+	Put(node *PoolNode)
+	GetCapacity() types.IDX_T
+	SetCapacity(capacity types.IDX_T)
+	GetUsageSize() types.IDX_T
+}
+
+type SimpleMemoryPool struct {
+	Capacity  types.IDX_T
+	UsageSize types.IDX_T
 }

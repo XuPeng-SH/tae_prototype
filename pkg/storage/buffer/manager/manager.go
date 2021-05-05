@@ -3,6 +3,7 @@ package manager
 import (
 	"fmt"
 	"tae/pkg/common/types"
+	buf "tae/pkg/storage/buffer"
 	blk "tae/pkg/storage/buffer/block"
 	blkif "tae/pkg/storage/buffer/block/iface"
 	mgrif "tae/pkg/storage/buffer/manager/iface"
@@ -16,7 +17,7 @@ var (
 func NewBufferManager(capacity types.IDX_T) mgrif.IBufferManager {
 
 	mgr := &BufferManager{
-		Pool:        NewSimpleMemoryPool(capacity),
+		Pool:        buf.NewSimpleMemoryPool(capacity),
 		TransientID: layout.MIN_TRANSIENT_BLOCK_ID,
 		Blocks:      make(map[layout.BlockId]blkif.IBlockHandle),
 	}

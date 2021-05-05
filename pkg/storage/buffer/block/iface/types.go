@@ -9,12 +9,24 @@ import (
 	"tae/pkg/storage/layout"
 )
 
-type BlockState = uint8
+type BlockState = uint32
 
 const (
 	BLOCK_LOADED BlockState = iota
 	BLOCK_UNLOAD
 )
+
+func AtomicLoadState(addr *BlockState) BlockState {
+	return atomic.LoadUint32(addr)
+}
+
+func AtomicStoreState(addr *BlockState, val BlockState) {
+	atomic.StoreUint32(addr, val)
+}
+
+func AtomicCASState(addr *BlockState, old, new BlockState) bool {
+	return atomic.CompareAndSwapUint32(addr, old, new)
+}
 
 type BlockRTState = uint32
 
@@ -58,6 +70,7 @@ type IBlockHandle interface {
 	UnRef() bool
 	// If the current Refs is not 0, it returns true, else false
 	HasRef() bool
+	// SetBuffer(buffer buf.IBuffer) error
 }
 
 type IBufferHandle interface {

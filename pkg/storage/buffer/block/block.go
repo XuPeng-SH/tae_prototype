@@ -11,9 +11,9 @@ var (
 	_ iface.IBlockBuffer = (*BlockBuffer)(nil)
 )
 
-func NewBlockBuffer(id layout.BlockId) iface.IBlockBuffer {
+func NewBlockBuffer(id layout.BlockId, pool buf.IMemoryPool) iface.IBlockBuffer {
 	bb := &BlockBuffer{
-		IBuffer: buf.NewBuffer(layout.BLOCK_ALLOC_SIZE),
+		IBuffer: buf.NewBuffer(layout.BLOCK_ALLOC_SIZE, pool),
 		ID:      id,
 	}
 	bb.IBuffer.(*buf.Buffer).Type = buf.BLOCK_BUFFER

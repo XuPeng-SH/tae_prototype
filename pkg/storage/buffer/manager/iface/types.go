@@ -1,4 +1,4 @@
-package blkif
+package iface
 
 import (
 	"sync"

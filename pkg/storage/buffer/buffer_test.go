@@ -9,9 +9,10 @@ import (
 )
 
 func TestBuffer(t *testing.T) {
-	buf := NewBuffer(layout.BLOCK_SECTOR_SIZE)
+	pool := NewSimpleMemoryPool(layout.BLOCK_ALLOC_SIZE * 100)
+	buf := NewBuffer(layout.BLOCK_SECTOR_SIZE, pool)
 	for i := layout.BLOCK_HEAD_SIZE; i < layout.BLOCK_SECTOR_SIZE; i++ {
-		buf.(*Buffer).Data[i] = byte((i - layout.BLOCK_HEAD_SIZE) % 256)
+		buf.(*Buffer).Node.Data[i] = byte((i - layout.BLOCK_HEAD_SIZE) % 256)
 	}
 	assert.Equal(t, NA_BUFFER, buf.GetType())
 
@@ -24,7 +25,7 @@ func TestBuffer(t *testing.T) {
 	// t.Log(buf.Data)
 	r, err := os.OpenFile(path, os.O_RDONLY, 0666)
 	assert.Equal(t, err, nil)
-	buf2 := NewBuffer(layout.BLOCK_SECTOR_SIZE)
+	buf2 := NewBuffer(layout.BLOCK_SECTOR_SIZE, pool)
 	_, err = buf2.ReadAt(r, 0)
 	assert.Equal(t, err, nil)
 	r.Close()
@@ -32,7 +33,7 @@ func TestBuffer(t *testing.T) {
 
 	assert.Equal(t, buf.Capacity(), int64(layout.BLOCK_SECTOR_SIZE))
 	buf2.Clear()
-	assert.Equal(t, buf2.(*Buffer).Data[22], byte(0))
-	assert.Equal(t, buf2.(*Buffer).Data[23], byte(0))
-	assert.Equal(t, buf2.(*Buffer).Data[24], byte(0))
+	assert.Equal(t, buf2.(*Buffer).Node.Data[22], byte(0))
+	assert.Equal(t, buf2.(*Buffer).Node.Data[23], byte(0))
+	assert.Equal(t, buf2.(*Buffer).Node.Data[24], byte(0))
 }

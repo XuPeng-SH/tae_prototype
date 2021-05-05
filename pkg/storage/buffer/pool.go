@@ -1,4 +1,4 @@
-package manager
+package buffer
 
 import (
 	"tae/pkg/common/types"
@@ -29,22 +29,22 @@ func (pool *SimpleMemoryPool) Get(size types.IDX_T) (node *PoolNode) {
 	currsize := types.AtomicLoad(&(pool.UsageSize))
 	postsize := size + currsize
 	if postsize > capacity {
-		return &PoolNode{Buff: []byte{}, Pool: pool}
+		return &PoolNode{Data: []byte{}, Pool: pool}
 	}
 	for !types.AtomicCAS(&(pool.UsageSize), currsize, postsize) {
 		currsize = types.AtomicLoad(&(pool.UsageSize))
 		postsize += currsize + size
 		if postsize > capacity {
-			return &PoolNode{Buff: []byte{}, Pool: pool}
+			return &PoolNode{Data: []byte{}, Pool: pool}
 		}
 	}
 	buf := make([]byte, size)
-	return &PoolNode{Buff: buf, Pool: pool}
+	return &PoolNode{Data: buf, Pool: pool}
 }
 
 // Only for temp test
 func (pool *SimpleMemoryPool) Put(node *PoolNode) {
-	size := int64(len(node.Buff))
+	size := int64(len(node.Data))
 	if size == 0 {
 		return
 	}
@@ -52,4 +52,5 @@ func (pool *SimpleMemoryPool) Put(node *PoolNode) {
 	if usagesize > pool.Capacity {
 		panic("")
 	}
+	node.Data = nil
 }
