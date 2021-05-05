@@ -20,6 +20,7 @@ func NewBufferManager(capacity types.IDX_T) mgrif.IBufferManager {
 		Pool:        buf.NewSimpleMemoryPool(capacity),
 		TransientID: layout.MIN_TRANSIENT_BLOCK_ID,
 		Blocks:      make(map[layout.BlockId]blkif.IBlockHandle),
+		EvictHolder: NewSimpleEvictHolder(SIMPLE_EVICT_HOLDER_CAPACITY),
 	}
 
 	return mgr
@@ -78,24 +79,47 @@ func (mgr *BufferManager) UnregisterBlock(blk_id layout.BlockId, can_destroy boo
 }
 
 func (mgr *BufferManager) Unpin(handle blkif.IBlockHandle) {
-	mgr.Lock()
-	defer mgr.Unlock()
+	handle.Lock()
+	defer handle.Unlock()
 	if !handle.UnRef() {
 		panic("logic error")
 	}
 	if !handle.HasRef() {
-		// Mark handle as stale
-		// Temp to delete the handle from map
-		// FIXME
-		// delete(mgr.Blocks, handle.GetID())
+		evict_node := &EvictNode{Block: handle, Iter: handle.IncIteration()}
+		mgr.EvictHolder.Enqueue(evict_node)
 	}
 }
 
 func (mgr *BufferManager) makePoolNode(capacity types.IDX_T) *buf.PoolNode {
 	node := mgr.Pool.Get(capacity, false)
+	if node != nil {
+		return node
+	}
 	for node == nil {
-		// TODO: evict blocks here
-		return nil
+		evict_node := mgr.EvictHolder.Dequeue()
+		if node == nil {
+			return nil
+		}
+		if evict_node.Block.IsClosed() {
+			continue
+		}
+
+		if !evict_node.Unloadable(evict_node.Block) {
+			continue
+		}
+
+		{
+			evict_node.Block.Lock()
+			defer evict_node.Block.Unload()
+			if !evict_node.Unloadable(evict_node.Block) {
+				continue
+			}
+			if !evict_node.Block.Unloadable() {
+				continue
+			}
+			evict_node.Block.Unload()
+		}
+		node = mgr.Pool.Get(capacity, false)
 	}
 	return node
 }

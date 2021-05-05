@@ -26,6 +26,15 @@ func NewBlockHandle(ctx *BlockHandleCtx) blkif.IBlockHandle {
 	return handle
 }
 
+func (h *BlockHandle) Iteration() types.IDX_T {
+	return h.Iter
+}
+
+func (h *BlockHandle) IncIteration() types.IDX_T {
+	h.Iter++
+	return h.Iter
+}
+
 func (h *BlockHandle) Unload() {
 	if blkif.AtomicCASState(&(h.State), blkif.BLOCK_LOADED, blkif.BLOCK_UNLOADING) {
 		h.Buff.Close()
@@ -78,6 +87,17 @@ func (h *BlockHandle) Close() error {
 func (h *BlockHandle) IsClosed() bool {
 	state := blkif.AtomicLoadRTState(&(h.RTState))
 	return state == blkif.BLOCK_RT_CLOSED
+}
+
+func (h *BlockHandle) Unloadable() bool {
+	if h.State == blkif.BLOCK_UNLOAD {
+		return false
+	}
+	if h.HasRef() {
+		return false
+	}
+
+	return true
 }
 
 func (h *BlockHandle) RollbackLoad() {

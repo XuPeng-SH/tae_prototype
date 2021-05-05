@@ -60,8 +60,9 @@ type IBlockHandle interface {
 	sync.Locker
 	io.Closer
 	GetID() layout.BlockId
-	// Unload()
+	Unload()
 	// Loadable() bool
+	Unloadable() bool
 	// GetBuff() buf.IBuffer
 	PrepareLoad() bool
 	RollbackLoad()
@@ -78,6 +79,8 @@ type IBlockHandle interface {
 	// If the current Refs is not 0, it returns true, else false
 	HasRef() bool
 	SetBuffer(buffer buf.IBuffer) error
+	Iteration() types.IDX_T
+	IncIteration() types.IDX_T
 }
 
 type IBufferHandle interface {

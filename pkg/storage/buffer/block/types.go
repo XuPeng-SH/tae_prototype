@@ -31,6 +31,7 @@ type BlockHandle struct {
 	RTState     blkif.BlockRTState
 	Refs        types.IDX_T
 	Manager     mgrif.IBufferManager
+	Iter        types.IDX_T
 }
 
 // BufferHandle is created from IBufferManager::Pin, which will set the IBlockHandle reference to 1
