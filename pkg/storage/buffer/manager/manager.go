@@ -96,8 +96,11 @@ func (mgr *BufferManager) makePoolNode(capacity types.IDX_T) *buf.PoolNode {
 		return node
 	}
 	for node == nil {
+		// log.Printf("makePoolNode capacity %d now %d", capacity, mgr.GetUsageSize())
 		evict_node := mgr.EvictHolder.Dequeue()
-		if node == nil {
+		// log.Infof("Evict blk %s", evict_node.String())
+		if evict_node == nil {
+			log.Printf("Cannot get node from queue")
 			return nil
 		}
 		if evict_node.Block.IsClosed() {
@@ -124,7 +127,6 @@ func (mgr *BufferManager) makePoolNode(capacity types.IDX_T) *buf.PoolNode {
 	return node
 }
 
-// TODO: Make Pin lock-free
 func (mgr *BufferManager) Pin(handle blkif.IBlockHandle) blkif.IBufferHandle {
 	handle.Lock()
 	defer handle.Unlock()
