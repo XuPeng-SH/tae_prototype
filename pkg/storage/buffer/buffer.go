@@ -5,7 +5,6 @@ import (
 	"crypto/sha256"
 	log "github.com/sirupsen/logrus"
 	"io"
-	"tae/pkg/common/types"
 	"tae/pkg/common/util/hack"
 	"tae/pkg/storage/layout"
 )
@@ -14,19 +13,15 @@ var (
 	_ IBuffer = (*Buffer)(nil)
 )
 
-func NewBuffer(bufsize types.IDX_T, pool IMemoryPool) IBuffer {
-	if bufsize%layout.BLOCK_SECTOR_SIZE != 0 {
-		bufsize += layout.BLOCK_SECTOR_SIZE - (bufsize % layout.BLOCK_SECTOR_SIZE)
-	}
-	node := pool.Get(bufsize)
-	if node == nil {
-		log.Warnf("Cannot alloc buff with size: %d from pool with size: %d", bufsize, pool.GetCapacity()-pool.GetUsageSize())
+func NewBuffer(node *PoolNode) IBuffer {
+	if node == nil || node.Size < layout.BLOCK_HEAD_SIZE {
+		log.Warnf("NewBuffer should accept node of size no less than: %d", layout.BLOCK_HEAD_SIZE)
 		return nil
 	}
 	buf := &Buffer{
 		Node:       node,
 		HeaderSize: layout.BLOCK_HEAD_SIZE,
-		DataSize:   bufsize - layout.BLOCK_HEAD_SIZE,
+		DataSize:   node.Size - layout.BLOCK_HEAD_SIZE,
 		Hasher:     sha256.New(),
 	}
 	return buf

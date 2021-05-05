@@ -1,7 +1,7 @@
 package manager
 
 import (
-	"fmt"
+	log "github.com/sirupsen/logrus"
 	"tae/pkg/common/types"
 	buf "tae/pkg/storage/buffer"
 	blk "tae/pkg/storage/buffer/block"
@@ -56,14 +56,15 @@ func (mgr *BufferManager) GetCapacity() types.IDX_T {
 	return mgr.Pool.GetCapacity()
 }
 
-func (mgr *BufferManager) SetCapacity(capacity types.IDX_T) {
+// Temp only can SetCapacity with larger size
+func (mgr *BufferManager) SetCapacity(capacity types.IDX_T) error {
 	mgr.Lock()
 	defer mgr.Unlock()
-	if !mgr.makeSpace(0, capacity) {
-		panic(fmt.Sprintf("Cannot makeSpace(%d,%d)", 0, capacity))
-	}
+	// if !mgr.makeSpace(0, capacity) {
+	// 	panic(fmt.Sprintf("Cannot makeSpace(%d,%d)", 0, capacity))
+	// }
 	// types.AtomicStore(&(mgr.Capacity), capacity)
-	mgr.Pool.SetCapacity(capacity)
+	return mgr.Pool.SetCapacity(capacity)
 }
 
 func (mgr *BufferManager) UnregisterBlock(blk_id layout.BlockId, can_destroy bool) {
@@ -77,6 +78,16 @@ func (mgr *BufferManager) UnregisterBlock(blk_id layout.BlockId, can_destroy boo
 }
 
 func (mgr *BufferManager) makeSpace(free_size, upper_limit types.IDX_T) bool {
+
+	// for !types.AtomicCAS(&(mgr.UsageSize), currsize, postsize) {
+	// 	currsize = types.AtomicLoad(&(pool.UsageSize))
+	// 	postsize += currsize + size
+	// 	if postsize > capacity {
+	// 		return nil
+	// 		// return &PoolNode{Data: []byte{}, Pool: pool}
+	// 	}
+	// }
+	// for
 	if free_size > upper_limit {
 		return false
 	}
@@ -98,14 +109,33 @@ func (mgr *BufferManager) Unpin(handle blkif.IBlockHandle) {
 	}
 }
 
+func (mgr *BufferManager) makePoolNode(capacity types.IDX_T) *buf.PoolNode {
+	node := mgr.Pool.Get(capacity, false)
+	for node == nil {
+		// TODO
+		return nil
+	}
+	return node
+}
+
+// TODO: Make Pin lock-free
 func (mgr *BufferManager) Pin(handle blkif.IBlockHandle) blkif.IBufferHandle {
 	handle.Lock()
 	defer handle.Unlock()
-	if handle.GetState() != blkif.BLOCK_LOADED {
-		if !mgr.makeSpace(handle.GetCapacity(), mgr.GetCapacity()) {
-			panic(fmt.Sprintf("Cannot makeSpace(%d,%d)", handle.GetCapacity(), mgr.GetCapacity()))
+	if handle.PrepareLoad() {
+		node := mgr.makePoolNode(handle.GetCapacity())
+		if node == nil {
+			handle.RollbackLoad()
+			log.Warnf("Cannot makeSpace(%d,%d)", handle.GetCapacity(), mgr.GetCapacity())
+			return nil
+		}
+		buf := blk.NewBlockBuffer(handle.GetID(), node)
+		handle.SetBuffer(buf)
+		if err := handle.CommitLoad(); err != nil {
+			handle.RollbackLoad()
+			panic(err.Error())
 		}
 	}
 	handle.Ref()
-	return handle.Load()
+	return handle.MakeHandle()
 }

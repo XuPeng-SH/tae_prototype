@@ -15,8 +15,12 @@ func (pool *SimpleMemoryPool) GetCapacity() types.IDX_T {
 	return types.AtomicLoad(&(pool.Capacity))
 }
 
-func (pool *SimpleMemoryPool) SetCapacity(capacity types.IDX_T) {
+func (pool *SimpleMemoryPool) SetCapacity(capacity types.IDX_T) error {
+	if capacity < types.AtomicLoad(&(pool.Capacity)) {
+		return types.ErrLogicError
+	}
 	types.AtomicStore(&(pool.Capacity), capacity)
+	return nil
 }
 
 func (pool *SimpleMemoryPool) GetUsageSize() types.IDX_T {
@@ -24,7 +28,7 @@ func (pool *SimpleMemoryPool) GetUsageSize() types.IDX_T {
 }
 
 // Only for temp test
-func (pool *SimpleMemoryPool) Get(size types.IDX_T) (node *PoolNode) {
+func (pool *SimpleMemoryPool) Get(size types.IDX_T, lazy bool) (node *PoolNode) {
 	capacity := types.AtomicLoad(&(pool.Capacity))
 	currsize := types.AtomicLoad(&(pool.UsageSize))
 	postsize := size + currsize
@@ -40,8 +44,19 @@ func (pool *SimpleMemoryPool) Get(size types.IDX_T) (node *PoolNode) {
 			// return &PoolNode{Data: []byte{}, Pool: pool}
 		}
 	}
-	buf := make([]byte, size)
-	return &PoolNode{Data: buf, Pool: pool}
+	buf := []byte{}
+	if !lazy {
+		buf = make([]byte, size)
+	}
+	return &PoolNode{Data: buf, Pool: pool, Size: size}
+}
+
+// Only for temp test
+func (pool *SimpleMemoryPool) DoAlloc(node *PoolNode) {
+	if len(node.Data) == int(node.Size) {
+		return
+	}
+	node.Data = make([]byte, node.Size)
 }
 
 // Only for temp test

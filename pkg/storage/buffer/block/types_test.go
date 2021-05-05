@@ -10,15 +10,18 @@ import (
 
 func TestBlock(t *testing.T) {
 	pool := buf.NewSimpleMemoryPool(layout.BLOCK_ALLOC_SIZE * 2)
+	// node := pool.Get()
 	blk_id := layout.NewBlockId(0, 0)
-	blk := NewBlockBuffer(*blk_id, pool)
+	node := pool.Get(layout.BLOCK_ALLOC_SIZE, false)
+	blk := NewBlockBuffer(*blk_id, node)
 	assert.Equal(t, blk.Capacity(), int64(layout.BLOCK_ALLOC_SIZE))
 	assert.Equal(t, *blk_id, blk.GetID())
 	assert.Equal(t, buf.BLOCK_BUFFER, blk.GetType())
 	assert.Equal(t, types.IDX_T(blk.Capacity()), pool.GetUsageSize())
 
 	blk0_1_id := layout.NewBlockId(0, 1)
-	blk0_1 := NewBlockBuffer(*blk0_1_id, pool)
+	node2 := pool.Get(layout.BLOCK_ALLOC_SIZE, false)
+	blk0_1 := NewBlockBuffer(*blk0_1_id, node2)
 	assert.Equal(t, blk0_1.Capacity(), int64(layout.BLOCK_ALLOC_SIZE))
 	assert.Equal(t, types.IDX_T(blk.Capacity()+blk0_1.Capacity()), pool.GetUsageSize())
 

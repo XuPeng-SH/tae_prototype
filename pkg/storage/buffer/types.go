@@ -44,13 +44,15 @@ type Buffer struct {
 type PoolNode struct {
 	Data []byte
 	Pool IMemoryPool
+	Size types.IDX_T
 }
 
 type IMemoryPool interface {
-	Get(size types.IDX_T) (node *PoolNode)
+	Get(size types.IDX_T, lazy bool) (node *PoolNode)
+	DoAlloc(node *PoolNode)
 	Put(node *PoolNode)
 	GetCapacity() types.IDX_T
-	SetCapacity(capacity types.IDX_T)
+	SetCapacity(capacity types.IDX_T) error
 	GetUsageSize() types.IDX_T
 }
 

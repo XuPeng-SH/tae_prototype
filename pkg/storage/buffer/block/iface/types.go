@@ -12,8 +12,11 @@ import (
 type BlockState = uint32
 
 const (
-	BLOCK_LOADED BlockState = iota
-	BLOCK_UNLOAD
+	BLOCK_UNLOAD BlockState = iota
+	BLOCK_LOADING
+	BLOCK_ROOLBACK
+	BLOCK_COMMIT
+	BLOCK_LOADED
 )
 
 func AtomicLoadState(addr *BlockState) BlockState {
@@ -59,7 +62,10 @@ type IBlockHandle interface {
 	// Unload()
 	// Loadable() bool
 	// GetBuff() buf.IBuffer
-	Load() IBufferHandle
+	PrepareLoad() bool
+	RollbackLoad()
+	CommitLoad() error
+	MakeHandle() IBufferHandle
 	GetState() BlockState
 	GetCapacity() types.IDX_T
 	// Size() types.IDX_T
@@ -70,7 +76,7 @@ type IBlockHandle interface {
 	UnRef() bool
 	// If the current Refs is not 0, it returns true, else false
 	HasRef() bool
-	// SetBuffer(buffer buf.IBuffer) error
+	SetBuffer(buffer buf.IBuffer) error
 }
 
 type IBufferHandle interface {

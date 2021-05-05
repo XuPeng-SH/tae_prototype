@@ -26,17 +26,17 @@ func NewBlockHandle(ctx *BlockHandleCtx) blkif.IBlockHandle {
 	return handle
 }
 
-func (h *BlockHandle) setBuffer(buffer buf.IBuffer) error {
-	if h.State == blkif.BLOCK_LOADED {
-		return types.ErrLogicError
-	}
-	if buffer != nil && types.IDX_T(buffer.Capacity()) > h.GetCapacity() {
-		return types.ErrCapacityOverflow
-	}
+// func (h *BlockHandle) setBuffer(buffer buf.IBuffer) error {
+// 	if h.State == blkif.BLOCK_LOADED {
+// 		return types.ErrLogicError
+// 	}
+// 	if buffer != nil && types.IDX_T(buffer.Capacity()) > h.GetCapacity() {
+// 		return types.ErrCapacityOverflow
+// 	}
 
-	h.Buff = buffer
-	return nil
-}
+// 	h.Buff = buffer
+// 	return nil
+// }
 
 func (h *BlockHandle) Unload() {
 	if h.State == blkif.BLOCK_UNLOAD {
@@ -91,15 +91,48 @@ func (h *BlockHandle) IsClosed() bool {
 	return state == blkif.BLOCK_RT_CLOSED
 }
 
-func (h *BlockHandle) Load() blkif.IBufferHandle {
-	if !blkif.AtomicCASState(&(h.State), blkif.BLOCK_UNLOAD, blkif.BLOCK_LOADED) {
-		return NewBufferHandle(h, h.Manager)
+func (h *BlockHandle) RollbackLoad() {
+	if !blkif.AtomicCASState(&(h.State), blkif.BLOCK_LOADING, blkif.BLOCK_ROOLBACK) {
+		return
 	}
-	h.State = blkif.BLOCK_LOADED
-	// TODO
-	blk := NewBlockBuffer(h.ID, h.Manager.GetPool())
-	h.setBuffer(blk)
+	h.UnRef()
+	if h.Buff != nil {
+		h.Buff.Close()
+	}
+	h.Buff = nil
+	blkif.AtomicStoreState(&(h.State), blkif.BLOCK_UNLOAD)
+}
+
+func (h *BlockHandle) PrepareLoad() bool {
+	return blkif.AtomicCASState(&(h.State), blkif.BLOCK_UNLOAD, blkif.BLOCK_LOADING)
+}
+
+func (h *BlockHandle) CommitLoad() error {
+	if !blkif.AtomicCASState(&(h.State), blkif.BLOCK_LOADING, blkif.BLOCK_COMMIT) {
+		return types.ErrLogicError
+	}
+
+	// TODO: Load content from io here
+
+	if !blkif.AtomicCASState(&(h.State), blkif.BLOCK_COMMIT, blkif.BLOCK_LOADED) {
+		return types.ErrLogicError
+	}
+	return nil
+}
+
+func (h *BlockHandle) MakeHandle() blkif.IBufferHandle {
+	if blkif.AtomicLoadState(&(h.State)) != blkif.BLOCK_LOADED {
+		panic("Should not call MakeHandle not BLOCK_LOADED")
+	}
 	return NewBufferHandle(h, h.Manager)
+}
+
+func (h *BlockHandle) SetBuffer(buf buf.IBuffer) error {
+	if h.Buff != nil || h.Capacity != types.IDX_T(buf.Capacity()) {
+		return types.ErrLogicError
+	}
+	h.Buff = buf
+	return nil
 }
 
 func NewBufferHandle(blk blkif.IBlockHandle, mgr mgrif.IBufferManager) blkif.IBufferHandle {

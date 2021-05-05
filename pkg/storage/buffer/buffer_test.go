@@ -11,7 +11,8 @@ import (
 
 func TestBuffer(t *testing.T) {
 	pool := NewSimpleMemoryPool(layout.BLOCK_ALLOC_SIZE * 100)
-	buf := NewBuffer(layout.BLOCK_SECTOR_SIZE, pool)
+	node := pool.Get(layout.BLOCK_SECTOR_SIZE, false)
+	buf := NewBuffer(node)
 	for i := layout.BLOCK_HEAD_SIZE; i < layout.BLOCK_SECTOR_SIZE; i++ {
 		buf.(*Buffer).Node.Data[i] = byte((i - layout.BLOCK_HEAD_SIZE) % 256)
 	}
@@ -26,7 +27,8 @@ func TestBuffer(t *testing.T) {
 	// t.Log(buf.Data)
 	r, err := os.OpenFile(path, os.O_RDONLY, 0666)
 	assert.Equal(t, err, nil)
-	buf2 := NewBuffer(layout.BLOCK_SECTOR_SIZE, pool)
+	node2 := pool.Get(layout.BLOCK_SECTOR_SIZE, false)
+	buf2 := NewBuffer(node2)
 	_, err = buf2.ReadAt(r, 0)
 	assert.Equal(t, err, nil)
 	r.Close()
@@ -42,7 +44,8 @@ func TestBuffer(t *testing.T) {
 func TestBufferPool(t *testing.T) {
 	pool_size := layout.BLOCK_ALLOC_SIZE
 	pool := NewSimpleMemoryPool(pool_size)
-	buf := NewBuffer(100, pool)
+	node := pool.Get(types.IDX_T(100), false)
+	buf := NewBuffer(node)
 	buf_cap := types.IDX_T(buf.Capacity())
 	assert.Equal(t, pool.GetUsageSize(), buf_cap)
 	t.Log(pool.GetUsageSize())
@@ -53,6 +56,7 @@ func TestBufferPool(t *testing.T) {
 	assert.Equal(t, pool.GetUsageSize(), types.IDX_0)
 	assert.Equal(t, buf.Capacity(), int64(0))
 
-	buf2 := NewBuffer(pool_size+1, pool)
+	node2 := pool.Get(pool_size+1, false)
+	buf2 := NewBuffer(node2)
 	assert.Equal(t, buf2, nil)
 }

@@ -13,7 +13,7 @@ type IBufferManager interface {
 
 	GetUsageSize() types.IDX_T
 	GetCapacity() types.IDX_T
-	SetCapacity(c types.IDX_T)
+	SetCapacity(c types.IDX_T) error
 
 	RegisterBlock(blk_id layout.BlockId) blkif.IBlockHandle
 	UnregisterBlock(blk_id layout.BlockId, can_destroy bool)

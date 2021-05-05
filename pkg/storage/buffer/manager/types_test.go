@@ -3,6 +3,7 @@ package manager
 import (
 	"github.com/stretchr/testify/assert"
 	"tae/pkg/common/types"
+	blkif "tae/pkg/storage/buffer/block/iface"
 	"tae/pkg/storage/layout"
 	"testing"
 )
@@ -49,13 +50,12 @@ func TestManager2(t *testing.T) {
 	h_0_0 := mgr.RegisterBlock(*blk_0_0)
 	assert.Equal(t, h_0_0.GetID(), *blk_0_0)
 	assert.False(t, h_0_0.HasRef())
-	panic1 := func() {
-		mgr.Pin(h_0_0)
-	}
-	assert.Panics(t, panic1)
+	b := mgr.Pin(h_0_0)
+	assert.Equal(t, b, nil)
 	new_cap := h_0_0.GetCapacity() * 2
 	mgr.SetCapacity(new_cap)
 	assert.Equal(t, mgr.GetCapacity(), new_cap)
+	t.Log(new_cap)
 
 	assert.Equal(t, len(mgr.(*BufferManager).Blocks), 1)
 	assert.False(t, h_0_0.HasRef())
@@ -77,4 +77,20 @@ func TestManager2(t *testing.T) {
 	assert.True(t, h_0_0.HasRef())
 	b_0_0_1.Close()
 	assert.False(t, h_0_0.HasRef())
+}
+
+func TestManager3(t *testing.T) {
+	capacity := layout.BLOCK_ALLOC_SIZE * 100
+	mgr := NewBufferManager(capacity)
+	assert.Equal(t, mgr.GetCapacity(), capacity)
+
+	blk_id_0_0 := *layout.NewBlockId(0, 0)
+	h_0_0 := mgr.RegisterBlock(blk_id_0_0)
+	assert.True(t, h_0_0 != nil)
+	assert.Equal(t, h_0_0.GetID(), blk_id_0_0)
+	assert.Equal(t, h_0_0.GetState(), blkif.BLOCK_UNLOAD)
+	assert.Equal(t, mgr.GetCapacity(), capacity)
+
+	// bh_0_0 := mgr.Pin(h_0_0)
+
 }
