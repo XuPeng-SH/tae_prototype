@@ -26,23 +26,12 @@ func NewBlockHandle(ctx *BlockHandleCtx) blkif.IBlockHandle {
 	return handle
 }
 
-// func (h *BlockHandle) setBuffer(buffer buf.IBuffer) error {
-// 	if h.State == blkif.BLOCK_LOADED {
-// 		return types.ErrLogicError
-// 	}
-// 	if buffer != nil && types.IDX_T(buffer.Capacity()) > h.GetCapacity() {
-// 		return types.ErrCapacityOverflow
-// 	}
-
-// 	h.Buff = buffer
-// 	return nil
-// }
-
 func (h *BlockHandle) Unload() {
-	if h.State == blkif.BLOCK_UNLOAD {
-		return
+	if blkif.AtomicCASState(&(h.State), blkif.BLOCK_LOADED, blkif.BLOCK_UNLOADING) {
+		h.Buff.Close()
+		h.Buff = nil
+		blkif.AtomicStoreState(&(h.State), blkif.BLOCK_UNLOAD)
 	}
-	h.State = blkif.BLOCK_UNLOAD
 }
 
 func (h *BlockHandle) GetCapacity() types.IDX_T {

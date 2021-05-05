@@ -77,24 +77,6 @@ func (mgr *BufferManager) UnregisterBlock(blk_id layout.BlockId, can_destroy boo
 	delete(mgr.Blocks, blk_id)
 }
 
-func (mgr *BufferManager) makeSpace(free_size, upper_limit types.IDX_T) bool {
-
-	// for !types.AtomicCAS(&(mgr.UsageSize), currsize, postsize) {
-	// 	currsize = types.AtomicLoad(&(pool.UsageSize))
-	// 	postsize += currsize + size
-	// 	if postsize > capacity {
-	// 		return nil
-	// 		// return &PoolNode{Data: []byte{}, Pool: pool}
-	// 	}
-	// }
-	// for
-	if free_size > upper_limit {
-		return false
-	}
-	// TODO
-	return true
-}
-
 func (mgr *BufferManager) Unpin(handle blkif.IBlockHandle) {
 	mgr.Lock()
 	defer mgr.Unlock()
@@ -112,7 +94,7 @@ func (mgr *BufferManager) Unpin(handle blkif.IBlockHandle) {
 func (mgr *BufferManager) makePoolNode(capacity types.IDX_T) *buf.PoolNode {
 	node := mgr.Pool.Get(capacity, false)
 	for node == nil {
-		// TODO
+		// TODO: evict blocks here
 		return nil
 	}
 	return node
