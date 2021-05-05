@@ -10,11 +10,25 @@ import (
 
 func TestBlock(t *testing.T) {
 	pool := buf.NewSimpleMemoryPool(layout.BLOCK_ALLOC_SIZE * 2)
-	blk_id := layout.BlockId{Part: uint32(0), Offset: uint32(0)}
-	blk := NewBlockBuffer(blk_id, pool)
+	blk_id := layout.NewBlockId(0, 0)
+	blk := NewBlockBuffer(*blk_id, pool)
 	assert.Equal(t, blk.Capacity(), int64(layout.BLOCK_ALLOC_SIZE))
-	assert.Equal(t, blk_id, blk.GetID())
+	assert.Equal(t, *blk_id, blk.GetID())
 	assert.Equal(t, buf.BLOCK_BUFFER, blk.GetType())
+	assert.Equal(t, types.IDX_T(blk.Capacity()), pool.GetUsageSize())
+
+	blk0_1_id := layout.NewBlockId(0, 1)
+	blk0_1 := NewBlockBuffer(*blk0_1_id, pool)
+	assert.Equal(t, blk0_1.Capacity(), int64(layout.BLOCK_ALLOC_SIZE))
+	assert.Equal(t, types.IDX_T(blk.Capacity()+blk0_1.Capacity()), pool.GetUsageSize())
+
+	blk.Close()
+	assert.Equal(t, blk.Capacity(), int64(0))
+	assert.Equal(t, types.IDX_T(blk0_1.Capacity()), pool.GetUsageSize())
+
+	blk0_1.Close()
+	assert.Equal(t, blk0_1.Capacity(), int64(0))
+	assert.Equal(t, types.IDX_0, pool.GetUsageSize())
 }
 
 func TestHandle(t *testing.T) {

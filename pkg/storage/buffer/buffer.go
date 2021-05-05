@@ -20,6 +20,7 @@ func NewBuffer(bufsize types.IDX_T, pool IMemoryPool) IBuffer {
 	}
 	node := pool.Get(bufsize)
 	if node == nil {
+		log.Warnf("Cannot alloc buff with size: %d from pool with size: %d", bufsize, pool.GetCapacity()-pool.GetUsageSize())
 		return nil
 	}
 	buf := &Buffer{

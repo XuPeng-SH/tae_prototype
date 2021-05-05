@@ -52,4 +52,7 @@ func TestBufferPool(t *testing.T) {
 	t.Log(pool.GetCapacity())
 	assert.Equal(t, pool.GetUsageSize(), types.IDX_0)
 	assert.Equal(t, buf.Capacity(), int64(0))
+
+	buf2 := NewBuffer(pool_size+1, pool)
+	assert.Equal(t, buf2, nil)
 }
