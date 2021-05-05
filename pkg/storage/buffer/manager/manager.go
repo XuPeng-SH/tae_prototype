@@ -25,6 +25,10 @@ func NewBufferManager(capacity types.IDX_T) mgrif.IBufferManager {
 	return mgr
 }
 
+func (mgr *BufferManager) GetPool() buf.IMemoryPool {
+	return mgr.Pool
+}
+
 func (mgr *BufferManager) RegisterBlock(blk_id layout.BlockId) blkif.IBlockHandle {
 	mgr.Lock()
 	defer mgr.Unlock()

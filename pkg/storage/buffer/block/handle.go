@@ -96,8 +96,9 @@ func (h *BlockHandle) Load() blkif.IBufferHandle {
 		return NewBufferHandle(h, h.Manager)
 	}
 	h.State = blkif.BLOCK_LOADED
-	// h.setBuffer()
 	// TODO
+	blk := NewBlockBuffer(h.ID, h.Manager.GetPool())
+	h.setBuffer(blk)
 	return NewBufferHandle(h, h.Manager)
 }
 
