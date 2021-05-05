@@ -55,6 +55,11 @@ func (buf *Buffer) GetType() BufferType {
 	return buf.Type
 }
 
+func (buf *Buffer) Close() error {
+	buf.Node.Pool.Put(buf.Node)
+	return nil
+}
+
 func (buf *Buffer) Clear() {
 	hack.MemsetRepeatByte(buf.Node.Data, byte(0))
 }

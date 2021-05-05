@@ -23,6 +23,7 @@ func (bt BufferType) String() string {
 }
 
 type IBuffer interface {
+	io.Closer
 	ReadAt(r io.ReaderAt, off int64) (n int, err error)
 	WriteAt(w io.WriterAt, off int64) (n int, err error)
 	Clear()

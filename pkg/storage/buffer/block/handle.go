@@ -79,6 +79,9 @@ func (h *BlockHandle) Close() error {
 		// Cocurrent senario that other client already call Close before
 		return nil
 	}
+	if h.Buff != nil {
+		h.Buff.Close()
+	}
 	h.Manager.UnregisterBlock(h.ID, h.Destroyable)
 	return nil
 }
